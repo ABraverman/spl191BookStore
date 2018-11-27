@@ -72,6 +72,7 @@ public class Inventory {
 			if (book == info.getBookTitle())
 				return info;
 		}
+		return null;
 	}
 
 	private boolean removeBook (BookInventoryInfo book) {
