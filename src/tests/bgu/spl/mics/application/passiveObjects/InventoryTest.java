@@ -8,16 +8,24 @@ import static org.junit.Assert.*;
 
 public class InventoryTest {
 
+    private Inventory invent;
+
     @Before
     public void setUp() throws Exception {
+        invent = createInventory();
     }
 
     @After
     public void tearDown() throws Exception {
     }
 
+    protected Inventory createInventory() {
+        return Inventory.getInstance();
+    }
+
     @Test
     public void getInstance() {
+        assertEquals(Inventory.getInstance(),invent);
     }
 
     @Test

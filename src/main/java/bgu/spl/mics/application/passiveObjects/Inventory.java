@@ -76,9 +76,14 @@ public class Inventory {
 		return null;
 	}
 
+	/**
+	 * takes a specified book from the inventory (removes its amount by 1)
+	 * @param book
+	 * @pre book.getAmountInInventory > 0
+	 * @Post @pre @Param book.getAmountInInventory - 1 == @Post @Param book.getAmountInInventory()
+	 */
 	private void removeBook (BookInventoryInfo book) {
-
-		return ;
+		book.take();
 	}
 	
 	

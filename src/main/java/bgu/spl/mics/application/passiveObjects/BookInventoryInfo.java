@@ -48,6 +48,14 @@ public class BookInventoryInfo {
 
 		return price;
 	}
+
+	public boolean take() {
+	    if (amount < 0) {
+            amount--;
+            return true;
+        }
+        return false;
+    }
 	
 	
 
