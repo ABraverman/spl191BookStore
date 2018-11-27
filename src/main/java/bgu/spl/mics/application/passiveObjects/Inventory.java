@@ -66,17 +66,19 @@ public class Inventory {
 	 * Checks book availability and returns the book info if available null otherwise.
 	 * @param book
 	 * @return book's bookInfo
+	 * @POST this.checkAvailabilty(book).getBookTitle() == @Param book
 	 */
 	private BookInventoryInfo checkAvailabilty (String book) {
-		for (BookInventoryInfo info : books) {
+		for (BookInventoryInfo info : inv.books) {
 			if (book == info.getBookTitle())
 				return info;
 		}
 		return null;
 	}
 
-	private boolean removeBook (BookInventoryInfo book) {
-		return false;
+	private void removeBook (BookInventoryInfo book) {
+
+		return ;
 	}
 	
 	

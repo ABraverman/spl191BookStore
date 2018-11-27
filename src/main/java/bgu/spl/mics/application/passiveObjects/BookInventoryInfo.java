@@ -8,14 +8,25 @@ package bgu.spl.mics.application.passiveObjects;
  */
 public class BookInventoryInfo {
 
+	private String title;
+	private int amount;
+	private int price;
+
+	public BookInventoryInfo(String t ,int a, int p) {
+
+		title = t;
+		amount = a;
+		price = p;
+
+	}
 	/**
      * Retrieves the title of this book.
      * <p>
      * @return The title of this book.   
      */
 	public String getBookTitle() {
-		// TODO Implement this
-		return null;
+
+		return title;
 	}
 
 	/**
@@ -24,8 +35,8 @@ public class BookInventoryInfo {
      * @return amount of available books.      
      */
 	public int getAmountInInventory() {
-		// TODO Implement this
-		return 0;
+
+		return amount;
 	}
 
 	/**
@@ -34,8 +45,8 @@ public class BookInventoryInfo {
      * @return the price of the book.
      */
 	public int getPrice() {
-		// TODO Implement this
-		return 0;
+
+		return price;
 	}
 	
 	

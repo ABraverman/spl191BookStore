@@ -35,4 +35,24 @@ public class InventoryTest {
     @Test
     public void printInventoryToFile() {
     }
+
+    @Test
+    public void getInstance1() {
+    }
+
+    @Test
+    public void load1() {
+    }
+
+    @Test
+    public void take1() {
+    }
+
+    @Test
+    public void checkAvailabiltyAndGetPrice1() {
+    }
+
+    @Test
+    public void printInventoryToFile1() {
+    }
 }
