@@ -8,11 +8,11 @@ import static org.junit.Assert.*;
 
 public class InventoryTest {
 
-    private Inventory invent;
+    private Inventory inv;
 
     @Before
     public void setUp() throws Exception {
-        invent = createInventory();
+        inv = createInventory();
     }
 
     @After
@@ -25,11 +25,17 @@ public class InventoryTest {
 
     @Test
     public void getInstance() {
-        assertEquals(Inventory.getInstance(),invent);
+        assertEquals(Inventory.getInstance(),inv);
     }
 
     @Test
     public void load() {
+        BookInventoryInfo b1 = new BookInventoryInfo("a", 5 ,3);
+        BookInventoryInfo b2 = new BookInventoryInfo("b", 3 ,2);
+        BookInventoryInfo b3 = new BookInventoryInfo("c", 8 ,50);
+        BookInventoryInfo[ ] books = {b1,b2,b3};
+        inv.load(books);
+        assertArrayEquals(books,inv.getBooks());
     }
 
     @Test
@@ -37,30 +43,35 @@ public class InventoryTest {
     }
 
     @Test
+    public void checkAvailabiltyPos() {
+        BookInventoryInfo b1 = new BookInventoryInfo("a", 5 ,3);
+        BookInventoryInfo[ ] books = {b1};
+        inv.load(books);
+        assertTrue(inv.isAvailabile("a"));
+
+    }
+
+    @Test
+    public void checkAvailabiltyPNeg() {
+        BookInventoryInfo b1 = new BookInventoryInfo("a", 0 ,3);
+        BookInventoryInfo[ ] books = {b1};
+        inv.load(books);
+        assertFalse(inv.isAvailabile("a"));
+
+    }
+
+    @Test
+    public void removeBook() {
+    }
+
+    @Test
     public void checkAvailabiltyAndGetPrice() {
+
     }
 
     @Test
     public void printInventoryToFile() {
     }
 
-    @Test
-    public void getInstance1() {
-    }
 
-    @Test
-    public void load1() {
-    }
-
-    @Test
-    public void take1() {
-    }
-
-    @Test
-    public void checkAvailabiltyAndGetPrice1() {
-    }
-
-    @Test
-    public void printInventoryToFile1() {
-    }
 }

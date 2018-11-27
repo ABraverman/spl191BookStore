@@ -41,6 +41,11 @@ public class Inventory {
 	public void load (BookInventoryInfo[ ] inventory ) {
 		inv.books = inventory;
 	}
+
+//	ONLY FOR TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	public BookInventoryInfo[ ] getBooks(){
+	    return inv.books;
+    }
 	
 	/**
      * Attempts to take one book from the store.
@@ -51,9 +56,9 @@ public class Inventory {
      * 			second should reduce by one the number of books of the desired type.
      */
 	public OrderResult take (String book) {
-		BookInventoryInfo bookInfo = inv.checkAvailabilty(book);
+		BookInventoryInfo bookInfo = inv.getBook(book);
 		synchronized (bookInfo) {
-			if (bookInfo != null) {
+			if (bookInfo != null && inv.isAvailabile(book)) {
 				inv.removeBook(bookInfo);
 				return OrderResult.SUCCESSFULLY_TAKEN;
 			}
@@ -66,14 +71,16 @@ public class Inventory {
 	 * Checks book availability and returns the book info if available null otherwise.
 	 * @param book
 	 * @return book's bookInfo
-	 * @POST this.checkAvailabilty(book).getBookTitle() == @Param book
+	 * @POST this.checkAvailabilty(book).getBookTitle() == @Param book, positive test
+     * @Post return null when there are no copies available
 	 */
-	private BookInventoryInfo checkAvailabilty (String book) {
-		for (BookInventoryInfo info : inv.books) {
-			if (book == info.getBookTitle())
-				return info;
-		}
-		return null;
+	protected boolean isAvailabile (String book) {
+        BookInventoryInfo info = inv.getBook(book);
+	    if (info.getAmountInInventory() > 0)
+	        return true;
+	    else
+	        return false;
+
 	}
 
 	/**
@@ -82,9 +89,18 @@ public class Inventory {
 	 * @pre book.getAmountInInventory > 0
 	 * @Post @pre @Param book.getAmountInInventory - 1 == @Post @Param book.getAmountInInventory()
 	 */
-	private void removeBook (BookInventoryInfo book) {
+    protected void removeBook (BookInventoryInfo book) {
 		book.take();
 	}
+
+	private BookInventoryInfo getBook (String book) {
+        for (BookInventoryInfo info : inv.books) {
+            if (book == info.getBookTitle())
+                return info;
+        }
+        return null;
+    }
+
 	
 	
 	
