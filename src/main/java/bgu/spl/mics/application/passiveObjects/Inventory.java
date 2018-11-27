@@ -58,7 +58,7 @@ public class Inventory {
 	public OrderResult take (String book) {
 		BookInventoryInfo bookInfo = inv.getBook(book);
 		synchronized (bookInfo) {
-			if (bookInfo != null && inv.isAvailabile(book)) {
+			if (bookInfo != null && inv.checkAvailabile(book) > 0) {
 				inv.removeBook(bookInfo);
 				return OrderResult.SUCCESSFULLY_TAKEN;
 			}
@@ -74,12 +74,9 @@ public class Inventory {
 	 * @POST this.checkAvailabilty(book).getBookTitle() == @Param book, positive test
      * @Post return null when there are no copies available
 	 */
-	protected boolean isAvailabile (String book) {
+	protected int checkAvailabile (String book) {
         BookInventoryInfo info = inv.getBook(book);
-	    if (info.getAmountInInventory() > 0)
-	        return true;
-	    else
-	        return false;
+        return info.getAmountInInventory();
 
 	}
 

@@ -47,7 +47,7 @@ public class InventoryTest {
         BookInventoryInfo b1 = new BookInventoryInfo("a", 5 ,3);
         BookInventoryInfo[ ] books = {b1};
         inv.load(books);
-        assertTrue(inv.isAvailabile("a"));
+        assertTrue(inv.checkAvailabile("a") == 5);
 
     }
 
@@ -56,12 +56,15 @@ public class InventoryTest {
         BookInventoryInfo b1 = new BookInventoryInfo("a", 0 ,3);
         BookInventoryInfo[ ] books = {b1};
         inv.load(books);
-        assertFalse(inv.isAvailabile("a"));
+        assertFalse(inv.checkAvailabile("a") == 0);
 
     }
 
     @Test
     public void removeBook() {
+        BookInventoryInfo b1 = new BookInventoryInfo("a", 0 ,3);
+        BookInventoryInfo[ ] books = {b1};
+        inv.load(books);
     }
 
     @Test
