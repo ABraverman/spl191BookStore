@@ -1,7 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
-
 /**
  * Passive data-object representing the store inventory.
  * It holds a collection of {@link BookInventoryInfo} for all the
@@ -14,12 +13,21 @@ package bgu.spl.mics.application.passiveObjects;
  */
 public class Inventory {
 
+	enum OrderResult  {NOT_IN_STOCK, SUCCESSFULLY_TAKEN}
+
+	private static final Inventory inv = new Inventory();
+	private BookInventoryInfo[ ] books;
+
+	private Inventory() {
+		books = null;
+	}
+
 	/**
      * Retrieves the single instance of this class.
+	 * @POST this.getInstance() == this.getInstance()
      */
 	public static Inventory getInstance() {
-		//TODO: Implement this
-		return null;
+		return inv;
 	}
 	
 	/**
@@ -28,9 +36,10 @@ public class Inventory {
      * <p>
      * @param inventory 	Data structure containing all data necessary for initialization
      * 						of the inventory.
+	 * @POST this.books == @param inventory;
      */
 	public void load (BookInventoryInfo[ ] inventory ) {
-		
+		inv.books = inventory;
 	}
 	
 	/**
@@ -42,8 +51,31 @@ public class Inventory {
      * 			second should reduce by one the number of books of the desired type.
      */
 	public OrderResult take (String book) {
-		
-		return null;
+		BookInventoryInfo bookInfo = inv.checkAvailabilty(book);
+		synchronized (bookInfo) {
+			if (bookInfo != null) {
+				inv.removeBook(bookInfo);
+				return OrderResult.SUCCESSFULLY_TAKEN;
+			}
+
+			return OrderResult.NOT_IN_STOCK;
+		}
+	}
+
+	/**
+	 * Checks book availability and returns the book info if available null otherwise.
+	 * @param book
+	 * @return book's bookInfo
+	 */
+	private BookInventoryInfo checkAvailabilty (String book) {
+		for (BookInventoryInfo info : books) {
+			if (book == info.getBookTitle())
+				return info;
+		}
+	}
+
+	private boolean removeBook (BookInventoryInfo book) {
+		return false;
 	}
 	
 	
