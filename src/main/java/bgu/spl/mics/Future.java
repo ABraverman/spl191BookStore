@@ -28,13 +28,14 @@ public class Future<T> {
      * not been completed.
      * <p>
      * @return return the result of type T if it is available, if not wait until it is available.
-     * 	       
+     * @post when resolved, returned == @param result
+     *
      */
 	public T get() {
-		synchronized (result) {
+		synchronized (this) {
 			while (!isDone()) {
 				try {
-					result.wait();
+					this.wait();
 				} catch (InterruptedException e) { }
 			}
 			return result;
@@ -43,12 +44,13 @@ public class Future<T> {
 	
 	/**
      * Resolves the result of this Future object.
+     * @post isdone = true, result = @param result
      */
 	public void resolve (T result) {
-		synchronized (this.result) {
+		synchronized (this) {
 			this.result = result;
 			isDone = true;
-			this.result.notifyAll();
+			this.notifyAll();
 		}
 	}
 	
@@ -69,12 +71,14 @@ public class Future<T> {
      * @return return the result of type T if it is available, if not, 
      * 	       wait for {@code timeout} TimeUnits {@code unit}. If time has
      *         elapsed, return null.
+     * @post returns null after time out
+     * @post if resolved, returned == @param result
      */
 	public T get(long timeout, TimeUnit unit) {
-		synchronized (result) {
+		synchronized (this) {
 			if (!isDone()) {
 				try {
-					unit.timedWait(result,timeout);
+					unit.timedWait(this,timeout);
 				} catch (InterruptedException e) { }
 			}
 			if (isDone())
