@@ -47,33 +47,45 @@ public class InventoryTest {
         BookInventoryInfo b1 = new BookInventoryInfo("a", 5 ,3);
         BookInventoryInfo[ ] books = {b1};
         inv.load(books);
-        assertTrue(inv.checkAvailabile("a") == 5);
+        assertTrue(inv.checkAvailability("a") == 5);
 
     }
 
     @Test
-    public void checkAvailabiltyPNeg() {
+    public void checkAvailabiltyNeg() {
         BookInventoryInfo b1 = new BookInventoryInfo("a", 0 ,3);
         BookInventoryInfo[ ] books = {b1};
         inv.load(books);
-        assertFalse(inv.checkAvailabile("a") == 0);
+        assertFalse(inv.checkAvailability("a") == 0);
 
     }
 
     @Test
-    public void removeBook() {
-        BookInventoryInfo b1 = new BookInventoryInfo("a", 0 ,3);
+    public void removeBookExpected() {
+        BookInventoryInfo b1 = new BookInventoryInfo("a", 5 ,3);
         BookInventoryInfo[ ] books = {b1};
         inv.load(books);
+        inv.removeBook("a");
+        assertEquals(inv.checkAvailability("a"), 4);
     }
 
     @Test
-    public void checkAvailabiltyAndGetPrice() {
-
+    public void checkAvailabiltyAndGetPriceNoSuchBook() {
+        BookInventoryInfo b1 = new BookInventoryInfo("a", 5 ,3);
+        BookInventoryInfo[ ] books = {b1};
+        inv.load(books);
+        int p = inv.checkAvailabiltyAndGetPrice("b");
+        assertEquals(p,-1);
     }
 
     @Test
-    public void printInventoryToFile() {
+    public void checkAvailabiltyAndGetPriceExpectedValue() {
+        BookInventoryInfo b1 = new BookInventoryInfo("a", 5 ,3);
+        BookInventoryInfo[ ] books = {b1};
+        inv.load(books);
+        int p = inv.checkAvailabiltyAndGetPrice("a");
+        assertEquals(p,3);
+
     }
 
 

@@ -13,8 +13,6 @@ package bgu.spl.mics.application.passiveObjects;
  */
 public class Inventory {
 
-	enum OrderResult  {NOT_IN_STOCK, SUCCESSFULLY_TAKEN}
-
 	private static final Inventory inv = new Inventory();
 	private BookInventoryInfo[ ] books;
 
@@ -58,8 +56,8 @@ public class Inventory {
 	public OrderResult take (String book) {
 		BookInventoryInfo bookInfo = inv.getBook(book);
 		synchronized (bookInfo) {
-			if (bookInfo != null && inv.checkAvailabile(book) > 0) {
-				inv.removeBook(bookInfo);
+			if (bookInfo != null & inv.checkAvailability(book) > 0) {
+				inv.removeBook(book);
 				return OrderResult.SUCCESSFULLY_TAKEN;
 			}
 
@@ -74,9 +72,10 @@ public class Inventory {
 	 * @POST this.checkAvailabilty(book).getBookTitle() == @Param book, positive test
      * @Post return null when there are no copies available
 	 */
-	protected int checkAvailabile (String book) {
-        BookInventoryInfo info = inv.getBook(book);
-        return info.getAmountInInventory();
+//	protected only for tests need to change back to private!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	protected int checkAvailability (String book) {
+        BookInventoryInfo bookInfo = inv.getBook(book);
+        return bookInfo.getAmountInInventory();
 
 	}
 
@@ -86,14 +85,20 @@ public class Inventory {
 	 * @pre book.getAmountInInventory > 0
 	 * @Post @pre @Param book.getAmountInInventory - 1 == @Post @Param book.getAmountInInventory()
 	 */
-    protected void removeBook (BookInventoryInfo book) {
-		book.take();
+	//	protected only for tests need to change back to private!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    protected void removeBook (String book) {
+		BookInventoryInfo bookInfo = inv.getBook(book);
+		if (bookInfo != null)
+			bookInfo.take();
 	}
 
+	/**
+	 *  returns the BookInventoryInfo of the requested book
+	 */
 	private BookInventoryInfo getBook (String book) {
-        for (BookInventoryInfo info : inv.books) {
-            if (book == info.getBookTitle())
-                return info;
+        for (BookInventoryInfo bookInfo : inv.books) {
+            if (book == bookInfo.getBookTitle())
+                return bookInfo;
         }
         return null;
     }
@@ -106,9 +111,13 @@ public class Inventory {
      * <p>
      * @param book 		Name of the book.
      * @return the price of the book if it is available, -1 otherwise.
+	 * @pre no such book withe the name @param book available
+	 * @post return value == expected value
      */
 	public int checkAvailabiltyAndGetPrice(String book) {
-		//TODO: Implement this
+		BookInventoryInfo bookInfo = inv.getBook(book);
+		if (bookInfo != null & bookInfo.getAmountInInventory() > 0)
+			return bookInfo.getPrice();
 		return -1;
 	}
 	
