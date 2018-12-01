@@ -1,6 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
-
+import java.util.List;
 
 /**
  * Passive object representing the store finance management. 
@@ -12,13 +12,18 @@ package bgu.spl.mics.application.passiveObjects;
  * You can add ONLY private fields and methods to this class as you see fit.
  */
 public class MoneyRegister {
+	private static final MoneyRegister mr = new MoneyRegister();
+	private List<OrderReceipt> receipts;
+	
+	private MoneyRegister(){
+		receipts = null;
+	}
 	
 	/**
      * Retrieves the single instance of this class.
      */
 	public static MoneyRegister getInstance() {
-		//TODO: Implement this
-		return null;
+		return mr;
 	}
 	
 	/**
@@ -27,15 +32,21 @@ public class MoneyRegister {
      * @param r		The receipt to save in the money register.
      */
 	public void file (OrderReceipt r) {
-		//TODO: Implement this.
+		synchronized (receipts){
+			receipts.add(r);
+		};
 	}
 	
 	/**
      * Retrieves the current total earnings of the store.  
      */
 	public int getTotalEarnings() {
-		//TODO: Implement this
-		return 0;
+		int totalEarnings = 0;
+		synchronized (receipts){
+			for (OrderReceipt or : receipts)
+				totalEarnings += or.getPrice();
+		}
+		return totalEarnings;
 	}
 	
 	/**
@@ -44,7 +55,9 @@ public class MoneyRegister {
      * @param amount 	amount to charge
      */
 	public void chargeCreditCard(Customer c, int amount) {
-		// TODO Implement this
+		if (c.getAvailableCreditAmount() < amount)
+			throw new IllegalArgumentException("Cannot charge customer, balance lower than charge");
+		c.decrementCreditBalance(amount);
 	}
 	
 	/**
