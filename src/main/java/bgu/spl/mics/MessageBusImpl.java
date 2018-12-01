@@ -16,7 +16,7 @@ public class MessageBusImpl implements MessageBus {
 	private ConcurrentHashMap< MicroService, LinkedBlockingQueue<Message>> messagesQueues;
 	private ConcurrentHashMap< Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventsToSubscribers;
 	private ConcurrentHashMap<MicroService,ConcurrentLinkedQueue<Class<? extends Message>>> subscribersToEvents;
-	private ConcurrentHashMap< Class<? extends Message>, Future> futures;
+	private ConcurrentHashMap< Message, Future> futures;
 
 
     private MessageBusImpl() {
@@ -59,7 +59,7 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		for (MicroService m : eventsToSubscribers.get(b)) {
+		for (MicroService m : eventsToSubscribers.get(b.getClass())) {
             messagesQueues.get(m).add(b);
 		}
 
@@ -70,9 +70,9 @@ public class MessageBusImpl implements MessageBus {
 	public <T> Future<T> sendEvent(Event<T> e) {
 		Future<T> future = new Future<>();
 		MicroService microService;
-		synchronized (eventsToSubscribers.get(e)) {
-			microService = eventsToSubscribers.get(e).poll();
-			eventsToSubscribers.get(e).add(microService);
+		synchronized (eventsToSubscribers.get(e.getClass())) {
+			microService = eventsToSubscribers.get(e.getClass()).poll();
+			eventsToSubscribers.get(e.getClass()).add(microService);
 		}
 		if (microService != null)
             messagesQueues.get(microService).add(e);
