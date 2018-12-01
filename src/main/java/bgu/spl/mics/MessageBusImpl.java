@@ -16,7 +16,7 @@ public class MessageBusImpl implements MessageBus {
 	private ConcurrentHashMap< MicroService, LinkedBlockingQueue<Message>> messagesQueues;
 	private ConcurrentHashMap< Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventsToSubscribers;
 	private ConcurrentHashMap<MicroService,ConcurrentLinkedQueue<Class<? extends Message>>> subscribersToEvents;
-	private ConcurrentHashMap< Message, Future> futures;
+	private ConcurrentHashMap< Event, Future> futures;
 
 
     private MessageBusImpl() {
