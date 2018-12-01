@@ -69,6 +69,7 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
 		Future<T> future = new Future<>();
+        futures.put(e, future);
 		MicroService microService;
 		synchronized (eventsToSubscribers.get(e.getClass())) {
 			microService = eventsToSubscribers.get(e.getClass()).poll();
