@@ -91,6 +91,10 @@ public class Customer {
 		while (!availableAmountInCreditCard.compareAndSet(tmp,tmp-amount))
 			tmp = availableAmountInCreditCard.get();
 	}
+
+	public void addReceipt( OrderReceipt r) {
+		this.receipts.add(r);
+	}
 	
 	
 }

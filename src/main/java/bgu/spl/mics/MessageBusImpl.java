@@ -49,25 +49,32 @@ public class MessageBusImpl implements MessageBus {
 		eventsToSubscribers.putIfAbsent(type,new ConcurrentLinkedQueue<>());
     	if (!eventsToSubscribers.get(type).contains(m))
             eventsToSubscribers.get(type).add(m);
+        eventsToSubscribers.notifyAll();
 		subscribersToEvents.putIfAbsent(m,new ConcurrentLinkedQueue<>());
         if (!subscribersToEvents.get(m).contains(type))
             subscribersToEvents.get(m).add(type);
+
+
     }
 
 	@Override
 	public <T> void complete(Event<T> e, T result) {
 		futures.get(e).resolve(result);
 		futures.remove(e);
-
 	}
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		if (eventsToSubscribers.containsKey(b.getClass())) {
-			for (MicroService m : eventsToSubscribers.get(b.getClass())) {
-				messagesQueues.get(m).add(b);
-			}
-		}
+		while (!eventsToSubscribers.containsKey(b.getClass())) {
+            synchronized (eventsToSubscribers) {
+                try {
+                    eventsToSubscribers.wait();
+                } catch (InterruptedException e) {}
+            }
+        }
+        for (MicroService m : eventsToSubscribers.get(b.getClass())) {
+            messagesQueues.get(m).add(b);
+        }
 
 	}
 

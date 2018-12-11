@@ -1,6 +1,13 @@
 package bgu.spl.mics.application.services;
 
-import bgu.spl.mics.MicroService;
+import bgu.spl.mics.*;
+import bgu.spl.mics.application.Messages.*;
+import bgu.spl.mics.application.passiveObjects.*;
+import javafx.util.Pair;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * APIService is in charge of the connection between a client and the store.
@@ -13,14 +20,40 @@ import bgu.spl.mics.MicroService;
  */
 public class APIService extends MicroService{
 
-	public APIService() {
-		super("Change_This_Name");
-		// TODO Implement this
+	Customer customer;
+	List<Pair<String,Integer>> orderSchedule;
+	ConcurrentHashMap<Message, Future<OrderReceipt>> futures;
+
+	public APIService(String name, Customer c, List<Pair<String,Integer>> s) {
+		super(name);
+		this.customer = c;
+		this.orderSchedule = s;
+		futures = new ConcurrentHashMap<>();
+
 	}
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
+		subscribeBroadcast(TickBroadcast.class, br -> {
+			if (br.getTick() >= br.getDuration()) {
+				this.terminate();
+			}
+			else {
+				for (Pair<String, Integer> p : orderSchedule) {
+					if (p.getValue() == br.getTick()) {
+						Event e = new BookOrderEvent(customer, p.getKey(), br.getTick());
+						futures.put(e, sendEvent(e));
+						orderSchedule.remove(p);
+					}
+				}
+				for (Map.Entry<Message, Future<OrderReceipt>> f : futures.entrySet()) {
+					if (f.getValue().get() != null) {
+						customer.addReceipt(f.getValue().get());
+					}
+					futures.remove(f.getKey());
+				}
+			}
+		});
 		
 	}
 
