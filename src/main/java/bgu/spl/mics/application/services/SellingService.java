@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.passiveObjects.*;
+import bgu.spl.mics.application.Messages.*;
 
 /**
  * Selling service in charge of taking orders from customers.
@@ -14,8 +16,15 @@ import bgu.spl.mics.MicroService;
  */
 public class SellingService extends MicroService{
 
-	public SellingService() {
-		super("Change_This_Name");
+	private MoneyRegister moneyRegister;
+	private int tick;
+
+
+	public SellingService(String name) {
+		super(name);
+		moneyRegister = MoneyRegister.getInstance();
+		tick = 0;
+
 		// TODO Implement this
 	}
 

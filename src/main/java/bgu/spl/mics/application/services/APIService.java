@@ -20,9 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class APIService extends MicroService{
 
-	Customer customer;
-	List<Pair<String,Integer>> orderSchedule;
-	ConcurrentHashMap<Message, Future<OrderReceipt>> futures;
+	private Customer customer;
+	private List<Pair<String,Integer>> orderSchedule;
+	private ConcurrentHashMap<Message, Future<OrderReceipt>> futures;
 
 	public APIService(String name, Customer c, List<Pair<String,Integer>> s) {
 		super(name);
