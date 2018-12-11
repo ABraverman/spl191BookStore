@@ -3,6 +3,7 @@ package bgu.spl.mics;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -17,6 +18,7 @@ public class MessageBusImpl implements MessageBus {
 	private ConcurrentHashMap< Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventsToSubscribers;
 	private ConcurrentHashMap<MicroService,ConcurrentLinkedQueue<Class<? extends Message>>> subscribersToEvents;
 	private ConcurrentHashMap< Event, Future> futures;
+
 
 
     private MessageBusImpl() {
@@ -44,8 +46,10 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	private void subscribe(Class<? extends Message> type, MicroService m) {
-        if (!eventsToSubscribers.get(type).contains(m))
+		eventsToSubscribers.putIfAbsent(type,new ConcurrentLinkedQueue<>());
+    	if (!eventsToSubscribers.get(type).contains(m))
             eventsToSubscribers.get(type).add(m);
+		subscribersToEvents.putIfAbsent(m,new ConcurrentLinkedQueue<>());
         if (!subscribersToEvents.get(m).contains(type))
             subscribersToEvents.get(m).add(type);
     }
@@ -59,8 +63,10 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		for (MicroService m : eventsToSubscribers.get(b.getClass())) {
-            messagesQueues.get(m).add(b);
+		if (eventsToSubscribers.containsKey(b.getClass())) {
+			for (MicroService m : eventsToSubscribers.get(b.getClass())) {
+				messagesQueues.get(m).add(b);
+			}
 		}
 
 	}
@@ -71,27 +77,39 @@ public class MessageBusImpl implements MessageBus {
 		Future<T> future = new Future<>();
         futures.put(e, future);
 		MicroService microService;
-		synchronized (eventsToSubscribers.get(e.getClass())) {
-			microService = eventsToSubscribers.get(e.getClass()).poll();
-			eventsToSubscribers.get(e.getClass()).add(microService);
+		ConcurrentLinkedQueue<MicroService> queue = eventsToSubscribers.get(e.getClass());
+		if (eventsToSubscribers.containsKey(e.getClass())){
+			synchronized (queue) {
+				microService = queue.poll();
+				queue.add(microService);
+			}
+
+			if (microService != null)
+				messagesQueues.get(microService).add(e);
+
+			return future;
 		}
-		if (microService != null)
-            messagesQueues.get(microService).add(e);
-		return future;
+		else  {
+			return null;
+		}
 	}
 
 	@Override
 	public void register(MicroService m) {
-        messagesQueues.put(m, new LinkedBlockingQueue<>());
-
+		messagesQueues.put(m, new LinkedBlockingQueue<>());
 	}
 
 	@Override
 	public void unregister(MicroService m) {
-		for (Class<? extends Message> mes : subscribersToEvents.get(m)) {
-            eventsToSubscribers.get(mes).remove(m);
+		if (subscribersToEvents.containsKey(m)) {
+			for (Class<? extends Message> mes : subscribersToEvents.get(m)) {
+				eventsToSubscribers.get(mes).remove(m);
+			}
 		}
-        messagesQueues.remove(m);
+		LinkedBlockingQueue<Message> tmp = messagesQueues.remove(m);
+		for (Message message : tmp) {
+			futures.get(message).resolve(null);
+		}
 	}
 
 	@Override

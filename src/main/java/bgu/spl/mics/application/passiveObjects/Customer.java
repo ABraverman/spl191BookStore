@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Passive data-object representing a customer of the store.
@@ -15,10 +16,15 @@ public class Customer {
 	private int distance;
 	private List<OrderReceipt> receipts;
 	private int creditCard;
-	private int availableAmountInCreditCard;
+	private AtomicInteger availableAmountInCreditCard;
 
-	public Customer(){
-//		TODO: do this
+	public Customer(int id, String name, String address,int distance,int creditCard, int availableAmount){
+		this.id = id;
+		this.name = name;
+		this.address = address;
+		this.distance = distance;
+		this.receipts = new List<OrderReceipt>();
+
 	}
 	/**
      * Retrieves the name of the customer.
@@ -64,7 +70,7 @@ public class Customer {
      * @return Amount of money left.   
      */
 	public int getAvailableCreditAmount() {
-		return availableAmountInCreditCard;
+		return availableAmountInCreditCard.get();
 	}
 	
 	/**
@@ -78,7 +84,9 @@ public class Customer {
 	 * @param amount: amount of money to reduce from credit balance
 	 */
 	synchronized public void decrementCreditBalance(int amount){
-		this.availableAmountInCreditCard -= amount;
+		int tmp = availableAmountInCreditCard.get();
+		while (!availableAmountInCreditCard.compareAndSet(tmp,tmp-amount))
+			tmp = availableAmountInCreditCard.get();
 	}
 	
 	
