@@ -1,6 +1,12 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
 
 /**
  * Passive object representing the store finance management. 
@@ -13,10 +19,10 @@ import java.util.List;
  */
 public class MoneyRegister {
 	private static final MoneyRegister mr = new MoneyRegister();
-	private List<OrderReceipt> receipts;
+	private ConcurrentLinkedQueue<OrderReceipt> receipts;
 	
 	private MoneyRegister(){
-		receipts = null;
+		receipts = new ConcurrentLinkedQueue<OrderReceipt>();
 	}
 	
 	/**
@@ -32,9 +38,7 @@ public class MoneyRegister {
      * @param r		The receipt to save in the money register.
      */
 	public void file (OrderReceipt r) {
-		synchronized (receipts){
-			receipts.add(r);
-		};
+		receipts.add(r);
 	}
 	
 	/**
@@ -42,10 +46,8 @@ public class MoneyRegister {
      */
 	public int getTotalEarnings() {
 		int totalEarnings = 0;
-		synchronized (receipts){
-			for (OrderReceipt or : receipts)
-				totalEarnings += or.getPrice();
-		}
+		for (OrderReceipt or : receipts)
+			totalEarnings += or.getPrice();
 		return totalEarnings;
 	}
 	
@@ -66,6 +68,18 @@ public class MoneyRegister {
      * This method is called by the main method in order to generate the output.. 
      */
 	public void printOrderReceipts(String filename) {
-		//TODO: Implement this
+		List<OrderReceipt> orl = new LinkedList<OrderReceipt>();
+		for (OrderReceipt or : receipts)
+			orl.add(or);
+		try{
+			FileOutputStream outFile = new FileOutputStream(filename);
+			ObjectOutputStream mapWriter = new ObjectOutputStream(outFile);
+			mapWriter.writeObject(orl);
+			mapWriter.close();
+			outFile.close();
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
 	}
 }
