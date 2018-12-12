@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Passive object representing the resource manager.
@@ -12,13 +13,15 @@ import bgu.spl.mics.Future;
  * You can add ONLY private methods and fields to this class.
  */
 public class ResourcesHolder {
+	private static final ResourcesHolder rh = new ResourcesHolder();
+	private LinkedBlockingQueue<DeliveryVehicle> availableVehicles = new LinkedBlockingQueue<DeliveryVehicle>();
+	private LinkedBlockingQueue<DeliveryVehicle> unavailableVehicles = new LinkedBlockingQueue<DeliveryVehicle>();
 	
 	/**
      * Retrieves the single instance of this class.
      */
 	public static ResourcesHolder getInstance() {
-		//TODO: Implement this
-		return null;
+		return rh;
 	}
 	
 	/**
@@ -29,8 +32,9 @@ public class ResourcesHolder {
      * 			{@link DeliveryVehicle} when completed.   
      */
 	public Future<DeliveryVehicle> acquireVehicle() {
-		//TODO: Implement this
-		return null;
+		Future<DeliveryVehicle> f = new Future<DeliveryVehicle>();
+		f.resolve(availableVehicles.take());
+		return f;
 	}
 	
 	/**
@@ -40,16 +44,18 @@ public class ResourcesHolder {
      * @param vehicle	{@link DeliveryVehicle} to be released.
      */
 	public void releaseVehicle(DeliveryVehicle vehicle) {
-		//TODO: Implement this
+		unavailableVehicles.remove(vehicle);
+		availableVehicles.add(vehicle);
 	}
 	
-	/**
+	/** 
      * Receives a collection of vehicles and stores them.
      * <p>
      * @param vehicles	Array of {@link DeliveryVehicle} instances to store.
      */
 	public void load(DeliveryVehicle[] vehicles) {
-		//TODO: Implement this
+		for (int i=0;i<vehicles.length;i++)
+			this.availableVehicles.add(vehicles[i]);
 	}
 
 }
