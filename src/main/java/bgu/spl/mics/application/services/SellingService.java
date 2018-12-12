@@ -53,8 +53,9 @@ public class SellingService extends MicroService{
                         complete(ev, null);
                 }
                 receipt.setIssueTick(tick);
+				complete(ev, receipt);
                 sendEvent(new DeliveryEvent(ev.getCustomer()));
-                complete(ev, receipt);
+                moneyRegister.file(receipt);
             }
             complete(ev, null);
 
