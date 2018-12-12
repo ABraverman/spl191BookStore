@@ -1,8 +1,12 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Future;
+import bgu.spl.mics.Message;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.Messages.*;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Selling service in charge of taking orders from customers.
@@ -24,13 +28,36 @@ public class SellingService extends MicroService{
 		super(name);
 		moneyRegister = MoneyRegister.getInstance();
 		tick = 0;
-
-		// TODO Implement this
 	}
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
+		subscribeBroadcast(TickBroadcast.class, br -> {
+			this.tick = br.getTick();
+			if (tick >= br.getDuration()) {
+				this.terminate();
+			}
+		});
+
+		subscribeEvent(BookOrderEvent.class, ev -> {
+			int bookPrice = sendEvent(new GetBookPriceEvent(ev.getBook())).get();
+			OrderReceipt receipt = new OrderReceipt(0,this.getName(),ev.getCustomer().getId(),ev.getBook(), bookPrice, ev.getOrderTick(), tick);
+			synchronized (ev.getCustomer()) {
+				if ((bookPrice != -1) && (ev.getCustomer().getAvailableCreditAmount() >= bookPrice)) {
+					if (sendEvent(new TakeBookEvent(ev.getBook())).get() == OrderResult.SUCCESSFULLY_TAKEN) {
+						moneyRegister.chargeCreditCard(ev.getCustomer(), bookPrice);
+					} else {
+						complete(ev, null);
+					}
+				}
+				else
+					complete(ev, null);
+			}
+			receipt.setIssueTick( tick);
+			sendEvent(new DeliveryEvent(ev.getCustomer()));
+			complete(ev, receipt);
+
+		});
 		
 	}
 

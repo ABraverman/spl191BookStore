@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Passive object representing the store finance management. 
@@ -82,4 +83,6 @@ public class MoneyRegister {
 			e.printStackTrace();
 		}
 	}
+
+
 }

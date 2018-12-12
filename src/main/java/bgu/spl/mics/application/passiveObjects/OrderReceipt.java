@@ -20,13 +20,13 @@ public class OrderReceipt implements Serializable{
 	private int processTick;
 	
 	public OrderReceipt(int orderId, String seller, int customerId, String bookTitle
-			, int price, int issueTick, int orderTick, int processTick){
+			, int price, int orderTick, int processTick){
 		this.orderId = orderId;
 		this.seller = seller;
 		this.customerId = customerId;
 		this.bookTitle = bookTitle;
 		this.price = price;
-		this.issueTick = issueTick;
+		this.issueTick = 0;
 		this.orderTick = orderTick;
 		this.processTick = processTick;
 	}
@@ -71,10 +71,13 @@ public class OrderReceipt implements Serializable{
 	/**
      * Retrieves the tick in which this receipt was issued.
      */
-	public int getIssuedTick() {
+	public int getIssueTick() {
 		return issueTick;
 	}
-	
+
+	public void setIssueTick(int t) {
+		issueTick = t;
+	}
 	/**
      * Retrieves the tick in which the customer sent the purchase request.
      */
@@ -89,4 +92,5 @@ public class OrderReceipt implements Serializable{
 	public int getProcessTick() {
 		return processTick;
 	}
+
 }
