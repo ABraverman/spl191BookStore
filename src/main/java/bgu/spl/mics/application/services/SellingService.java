@@ -48,9 +48,12 @@ public class SellingService extends MicroService{
                             moneyRegister.chargeCreditCard(ev.getCustomer(), bookPrice);
                         } else {
                             complete(ev, null);
+                            return;
                         }
-                    } else
-                        complete(ev, null);
+                    } else {
+						complete(ev, null);
+						return;
+					}
                 }
                 receipt.setIssueTick(tick);
 				complete(ev, receipt);
