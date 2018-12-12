@@ -10,4 +10,8 @@ public class DeliveryEvent implements Event {
     public DeliveryEvent (Customer c) {
         this.customer = c;
     }
+
+    public Customer getCustomer() {
+        return customer;
+    }
 }

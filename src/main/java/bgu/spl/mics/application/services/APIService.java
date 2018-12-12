@@ -5,6 +5,7 @@ import bgu.spl.mics.application.Messages.*;
 import bgu.spl.mics.application.passiveObjects.*;
 import javafx.util.Pair;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,12 +40,16 @@ public class APIService extends MicroService{
 				this.terminate();
 			}
 			else {
+				List<Pair<String, Integer>> toRemove = new LinkedList<>();
 				for (Pair<String, Integer> p : orderSchedule) {
 					if (p.getValue() == br.getTick()) {
 						Event e = new BookOrderEvent(customer, p.getKey(), br.getTick());
 						futures.put(e, sendEvent(e));
-						orderSchedule.remove(p);
+						toRemove.add(p);
 					}
+				}
+				for (Pair<String, Integer> p : toRemove) {
+					orderSchedule.remove(p);
 				}
 				for (Map.Entry<Message, Future<OrderReceipt>> f : futures.entrySet()) {
 					if (f.getValue().get() != null) {

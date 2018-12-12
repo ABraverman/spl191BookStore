@@ -23,7 +23,7 @@ public class MoneyRegister {
 	private ConcurrentLinkedQueue<OrderReceipt> receipts;
 	
 	private MoneyRegister(){
-		receipts = new ConcurrentLinkedQueue<OrderReceipt>();
+		receipts = new ConcurrentLinkedQueue<>();
 	}
 	
 	/**

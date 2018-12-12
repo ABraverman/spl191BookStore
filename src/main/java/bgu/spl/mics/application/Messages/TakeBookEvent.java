@@ -10,4 +10,8 @@ public class TakeBookEvent implements Event<OrderResult> {
     public TakeBookEvent (String book) {
         this.book = book;
     }
+
+    public String getBook() {
+        return book;
+    }
 }

@@ -33,7 +33,9 @@ public class ResourcesHolder {
      */
 	public Future<DeliveryVehicle> acquireVehicle() {
 		Future<DeliveryVehicle> f = new Future<DeliveryVehicle>();
-		f.resolve(availableVehicles.take());
+		try {
+			f.resolve(availableVehicles.take());
+		} catch (InterruptedException e) {}
 		return f;
 	}
 	

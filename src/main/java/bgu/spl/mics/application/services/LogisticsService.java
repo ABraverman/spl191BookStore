@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.Messages.*;
+import bgu.spl.mics.application.passiveObjects.*;
 
 /**
  * Logistic service in charge of delivering books that have been purchased to customers.
@@ -13,14 +15,25 @@ import bgu.spl.mics.MicroService;
  */
 public class LogisticsService extends MicroService {
 
-	public LogisticsService() {
-		super("Change_This_Name");
-		// TODO Implement this
+	public LogisticsService( String name) {
+		super(name);
 	}
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
+		subscribeBroadcast(TickBroadcast.class, br -> {
+			if (br.getTick() >= br.getDuration())
+				this.terminate();
+		});
+
+		subscribeEvent(DeliveryEvent.class, ev -> {
+			DeliveryVehicle deliveryVehicle = sendEvent(new AcquireVehicleEvent()).get();
+			if (deliveryVehicle != null) {
+				deliveryVehicle.deliver(ev.getCustomer().getAddress(), ev.getCustomer().getDistance());
+				sendEvent(new ReleaseVehicleEvent(deliveryVehicle));
+				complete(ev, null);
+			}
+		});
 		
 	}
 

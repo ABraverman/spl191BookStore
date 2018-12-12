@@ -11,4 +11,7 @@ public class GetBookPriceEvent implements Event<Integer> {
         this.book = book;
     }
 
+    public String getBook() {
+        return book;
+    }
 }

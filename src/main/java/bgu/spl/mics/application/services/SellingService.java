@@ -6,7 +6,6 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.Messages.*;
 
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Selling service in charge of taking orders from customers.
@@ -40,22 +39,24 @@ public class SellingService extends MicroService{
 		});
 
 		subscribeEvent(BookOrderEvent.class, ev -> {
-			int bookPrice = sendEvent(new GetBookPriceEvent(ev.getBook())).get();
-			OrderReceipt receipt = new OrderReceipt(0,this.getName(),ev.getCustomer().getId(),ev.getBook(), bookPrice, ev.getOrderTick(), tick);
-			synchronized (ev.getCustomer()) {
-				if ((bookPrice != -1) && (ev.getCustomer().getAvailableCreditAmount() >= bookPrice)) {
-					if (sendEvent(new TakeBookEvent(ev.getBook())).get() == OrderResult.SUCCESSFULLY_TAKEN) {
-						moneyRegister.chargeCreditCard(ev.getCustomer(), bookPrice);
-					} else {
-						complete(ev, null);
-					}
-				}
-				else
-					complete(ev, null);
-			}
-			receipt.setIssueTick( tick);
-			sendEvent(new DeliveryEvent(ev.getCustomer()));
-			complete(ev, receipt);
+			Integer bookPrice = sendEvent(new GetBookPriceEvent(ev.getBook())).get();
+			if (bookPrice != null) {
+                OrderReceipt receipt = new OrderReceipt(0, this.getName(), ev.getCustomer().getId(), ev.getBook(), bookPrice, ev.getOrderTick(), tick);
+                synchronized (ev.getCustomer()) {
+                    if ((bookPrice != -1) && (ev.getCustomer().getAvailableCreditAmount() >= bookPrice)) {
+                        if (sendEvent(new TakeBookEvent(ev.getBook())).get() == OrderResult.SUCCESSFULLY_TAKEN) {
+                            moneyRegister.chargeCreditCard(ev.getCustomer(), bookPrice);
+                        } else {
+                            complete(ev, null);
+                        }
+                    } else
+                        complete(ev, null);
+                }
+                receipt.setIssueTick(tick);
+                sendEvent(new DeliveryEvent(ev.getCustomer()));
+                complete(ev, receipt);
+            }
+            complete(ev, null);
 
 		});
 		
