@@ -54,9 +54,9 @@ public class ResourcesHolder {
      * @param vehicle	{@link DeliveryVehicle} to be released.
      */
 	public void releaseVehicle(DeliveryVehicle vehicle) {
-		Future<DeliveryVehicle> f =futures.poll();
+		Future<DeliveryVehicle> f = futures.poll();
 		if (f != null)
-			futures.poll().resolve(vehicle);
+			f.resolve(vehicle);
 		else {
 			availableVehicles.add(vehicle);
 		}
