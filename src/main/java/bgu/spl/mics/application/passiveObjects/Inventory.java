@@ -46,7 +46,7 @@ public class Inventory {
 
 //	ONLY FOR TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	protected BookInventoryInfo[ ] getBooks(){
-	    return inv.books;
+	    return books;
     }
 
 	/**
@@ -58,7 +58,7 @@ public class Inventory {
      * 			second should reduce by one the number of books of the desired type.
      */
 	public OrderResult take (String book) {
-		BookInventoryInfo bookInfo = inv.getBook(book);
+		BookInventoryInfo bookInfo = getBook(book);
         if (bookInfo != null) {
             synchronized (bookInfo) {
                 if (checkAvailability(book) > 0) {
@@ -80,7 +80,7 @@ public class Inventory {
 	 */
 //	protected only for tests need to change back to private!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	protected int checkAvailability (String book) {
-        BookInventoryInfo bookInfo = inv.getBook(book);
+        BookInventoryInfo bookInfo = getBook(book);
         return bookInfo.getAmountInInventory();
 
 	}
@@ -93,7 +93,7 @@ public class Inventory {
 	 */
 	//	protected only for tests need to change back to private!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     protected void removeBook (String book) {
-		BookInventoryInfo bookInfo = inv.getBook(book);
+		BookInventoryInfo bookInfo = getBook(book);
 		if (bookInfo != null)
 			bookInfo.take();
 	}
@@ -102,7 +102,7 @@ public class Inventory {
 	 *  returns the BookInventoryInfo of the requested book
 	 */
 	private BookInventoryInfo getBook (String book) {
-        for (BookInventoryInfo bookInfo : inv.books) {
+        for (BookInventoryInfo bookInfo : books) {
             if (book.equals(bookInfo.getBookTitle()))
                 return bookInfo;
         }
@@ -121,7 +121,7 @@ public class Inventory {
 	 * @post return value == expected value
      */
 	public int checkAvailabiltyAndGetPrice(String book) {
-		BookInventoryInfo bookInfo = inv.getBook(book);
+		BookInventoryInfo bookInfo = getBook(book);
 		if (bookInfo != null && bookInfo.getAmountInInventory() > 0)
 			return bookInfo.getPrice();
 		return -1;

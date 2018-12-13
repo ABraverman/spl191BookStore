@@ -39,27 +39,33 @@ public class SellingService extends MicroService{
 		});
 
 		subscribeEvent(BookOrderEvent.class, ev -> {
-			Integer bookPrice = sendEvent(new GetBookPriceEvent(ev.getBook())).get();
-			if (bookPrice != null) {
-                OrderReceipt receipt = new OrderReceipt(0, this.getName(), ev.getCustomer().getId(), ev.getBook(), bookPrice, ev.getOrderTick(), tick);
-                synchronized (ev.getCustomer()) {
-                    if ((bookPrice != -1) && (ev.getCustomer().getAvailableCreditAmount() >= bookPrice)) {
-                        if (sendEvent(new TakeBookEvent(ev.getBook())).get() == OrderResult.SUCCESSFULLY_TAKEN) {
-                            moneyRegister.chargeCreditCard(ev.getCustomer(), bookPrice);
-                        } else {
-                            complete(ev, null);
-                            return;
-                        }
-                    } else {
-						complete(ev, null);
-						return;
+			Future<Integer> futurePrice = sendEvent(new GetBookPriceEvent(ev.getBook()));
+			if (futurePrice != null) {
+				Integer bookPrice = futurePrice.get();
+				if (bookPrice != null) {
+					OrderReceipt receipt = new OrderReceipt(0, this.getName(), ev.getCustomer().getId(), ev.getBook(), bookPrice, ev.getOrderTick(), tick);
+					synchronized (ev.getCustomer()) {
+						if ((bookPrice != -1) && (ev.getCustomer().getAvailableCreditAmount() >= bookPrice)) {
+							Future<OrderResult> futureTake = sendEvent(new TakeBookEvent(ev.getBook()));
+							if (futureTake != null) {
+								if (futureTake.get() == OrderResult.SUCCESSFULLY_TAKEN) {
+									moneyRegister.chargeCreditCard(ev.getCustomer(), bookPrice);
+								} else {
+									complete(ev, null);
+									return;
+								}
+							}
+						} else {
+							complete(ev, null);
+							return;
+						}
 					}
-                }
-                receipt.setIssueTick(tick);
-				complete(ev, receipt);
-                sendEvent(new DeliveryEvent(ev.getCustomer()));
-                moneyRegister.file(receipt);
-            }
+					receipt.setIssueTick(tick);
+					complete(ev, receipt);
+					sendEvent(new DeliveryEvent(ev.getCustomer()));
+					moneyRegister.file(receipt);
+				}
+			}
             complete(ev, null);
 
 		});

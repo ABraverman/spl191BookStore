@@ -40,23 +40,28 @@ public class APIService extends MicroService{
 				this.terminate();
 			}
 			else {
-				List<Pair<String, Integer>> toRemove = new LinkedList<>();
+				List<Pair<String, Integer>> eToRemove = new LinkedList<>();
 				for (Pair<String, Integer> p : orderSchedule) {
 					if (p.getValue() == br.getTick()) {
 						Event e = new BookOrderEvent(customer, p.getKey(), br.getTick());
 						futures.put(e, sendEvent(e));
-						toRemove.add(p);
+						eToRemove.add(p);
 					}
 				}
-				for (Pair<String, Integer> p : toRemove) {
+				for (Pair<String, Integer> p : eToRemove) {
 					orderSchedule.remove(p);
 				}
+				List<Message> fToRemove = new LinkedList<>();
 				for (Map.Entry<Message, Future<OrderReceipt>> f : futures.entrySet()) {
-					if (f.getValue().get() != null) {
+					if (f.getValue() != null && f.getValue().get() != null ) {
 						customer.addReceipt(f.getValue().get());
 					}
-					futures.remove(f.getKey());
+					fToRemove.add(f.getKey());
 				}
+				for (Message m: fToRemove) {
+					futures.remove(m);
+				}
+
 			}
 		});
 		
