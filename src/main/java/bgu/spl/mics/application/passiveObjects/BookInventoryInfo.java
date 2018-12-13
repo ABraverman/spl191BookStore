@@ -10,25 +10,25 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class BookInventoryInfo {
 
-	private String title;
+	private String bookTitle;
 	private AtomicInteger amount;
 	private AtomicInteger price;
 
 	public BookInventoryInfo(String t ,int a, int p) {
 
-		title = t;
+		bookTitle = t;
 		amount = new AtomicInteger(a);
 		price = new AtomicInteger(p);
 
 	}
 	/**
-     * Retrieves the title of this book.
+     * Retrieves the bookTitle of this book.
      * <p>
-     * @return The title of this book.   
+     * @return The bookTitle of this book.   
      */
 	public String getBookTitle() {
 
-		return title;
+		return bookTitle;
 	}
 
 	/**
