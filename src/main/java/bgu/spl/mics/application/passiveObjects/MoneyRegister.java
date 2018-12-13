@@ -84,5 +84,8 @@ public class MoneyRegister {
 		}
 	}
 
-
+	@Override
+	public String toString() {
+		return receipts.toString();
+	}
 }

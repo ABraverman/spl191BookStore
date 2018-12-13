@@ -95,6 +95,12 @@ public class Customer {
 	public void addReceipt( OrderReceipt r) {
 		this.receipts.add(r);
 	}
+
+
+	public String toString() {
+		String out = "Id: " + id + " name: " + name + " address: " + address + " distance: " + this.distance + " creditcard: " + creditCard + " available Amount In CreditCard" + availableAmountInCreditCard + " receipts: " + this.receipts.toString();
+		return out;
+	}
 	
 	
 }

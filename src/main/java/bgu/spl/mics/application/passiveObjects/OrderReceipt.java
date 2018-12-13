@@ -93,4 +93,9 @@ public class OrderReceipt implements Serializable{
 		return processTick;
 	}
 
+	@Override
+	public String toString() {
+		String out = "orderId: " + this.orderId + " seller: " + this.seller + " customer id: " + customerId + " book title: " + bookTitle + " price: " + price + " issueTick: " + this.issueTick + " orderTick: " + this.orderTick + " processTick: " + this.processTick;
+		return out;
+	}
 }
