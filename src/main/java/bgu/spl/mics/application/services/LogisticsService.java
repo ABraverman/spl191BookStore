@@ -27,7 +27,7 @@ public class LogisticsService extends MicroService {
 		});
 
 		subscribeEvent(DeliveryEvent.class, ev -> {
-			DeliveryVehicle deliveryVehicle = sendEvent(new AcquireVehicleEvent()).get();
+			DeliveryVehicle deliveryVehicle = sendEvent(new AcquireVehicleEvent()).get().get();
 			if (deliveryVehicle != null) {
 				deliveryVehicle.deliver(ev.getCustomer().getAddress(), ev.getCustomer().getDistance());
 				sendEvent(new ReleaseVehicleEvent(deliveryVehicle));

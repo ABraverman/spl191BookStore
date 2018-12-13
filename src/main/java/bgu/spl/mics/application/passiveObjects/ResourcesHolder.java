@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.Future;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -14,14 +15,21 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class ResourcesHolder {
 	private static final ResourcesHolder rh = new ResourcesHolder();
-	private LinkedBlockingQueue<DeliveryVehicle> availableVehicles = new LinkedBlockingQueue<DeliveryVehicle>();
-	private LinkedBlockingQueue<DeliveryVehicle> unavailableVehicles = new LinkedBlockingQueue<DeliveryVehicle>();
+	private LinkedBlockingQueue<DeliveryVehicle> availableVehicles;
+	private LinkedBlockingQueue<DeliveryVehicle> unavailableVehicles;
+	private ConcurrentLinkedQueue<Future<DeliveryVehicle>> futures;
 	
 	/**
      * Retrieves the single instance of this class.
      */
 	public static ResourcesHolder getInstance() {
 		return rh;
+	}
+
+	private ResourcesHolder () {
+		availableVehicles = new LinkedBlockingQueue<>();
+		unavailableVehicles = new LinkedBlockingQueue<>();
+		futures = new ConcurrentLinkedQueue<>();
 	}
 	
 	/**
@@ -32,10 +40,12 @@ public class ResourcesHolder {
      * 			{@link DeliveryVehicle} when completed.   
      */
 	public Future<DeliveryVehicle> acquireVehicle() {
-		Future<DeliveryVehicle> f = new Future<DeliveryVehicle>();
-		try {
-			f.resolve(availableVehicles.take());
-		} catch (InterruptedException e) {}
+		Future<DeliveryVehicle> f = new Future<>();
+		DeliveryVehicle vehicle = availableVehicles.poll();
+			if (vehicle != null)
+				f.resolve(vehicle);
+			else
+				futures.add(f);
 		return f;
 	}
 	
@@ -46,15 +56,26 @@ public class ResourcesHolder {
      * @param vehicle	{@link DeliveryVehicle} to be released.
      */
 	public void releaseVehicle(DeliveryVehicle vehicle) {
-		unavailableVehicles.remove(vehicle);
-		availableVehicles.add(vehicle);
+		Future<DeliveryVehicle> f =futures.poll();
+		if (f != null)
+			futures.poll().resolve(vehicle);
+		else {
+			unavailableVehicles.remove(vehicle);
+			availableVehicles.add(vehicle);
+		}
+
+
+
+
+
 	}
-	
+
 	/** 
      * Receives a collection of vehicles and stores them.
      * <p>
      * @param vehicles	Array of {@link DeliveryVehicle} instances to store.
      */
+//	should change from array to a collection and use addAll
 	public void load(DeliveryVehicle[] vehicles) {
 		for (int i=0;i<vehicles.length;i++)
 			this.availableVehicles.add(vehicles[i]);

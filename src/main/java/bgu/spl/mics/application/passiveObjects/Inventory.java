@@ -45,10 +45,10 @@ public class Inventory {
 	}
 
 //	ONLY FOR TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//	public BookInventoryInfo[ ] getBooks(){
-//	    return inv.books;
-//    }
-	
+	protected BookInventoryInfo[ ] getBooks(){
+	    return inv.books;
+    }
+
 	/**
      * Attempts to take one book from the store.
      * <p>
@@ -59,14 +59,16 @@ public class Inventory {
      */
 	public OrderResult take (String book) {
 		BookInventoryInfo bookInfo = inv.getBook(book);
-		synchronized (bookInfo) {
-			if (bookInfo != null && checkAvailability(book) > 0) {
-				removeBook(book);
-				return OrderResult.SUCCESSFULLY_TAKEN;
-			}
+        if (bookInfo != null) {
+            synchronized (bookInfo) {
+                if (checkAvailability(book) > 0) {
+                    removeBook(book);
+                    return OrderResult.SUCCESSFULLY_TAKEN;
+                }
+            }
+        }
+		return OrderResult.NOT_IN_STOCK;
 
-			return OrderResult.NOT_IN_STOCK;
-		}
 	}
 
 	/**
@@ -77,7 +79,7 @@ public class Inventory {
      * @Post return null when there are no copies available
 	 */
 //	protected only for tests need to change back to private!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	private int checkAvailability (String book) {
+	protected int checkAvailability (String book) {
         BookInventoryInfo bookInfo = inv.getBook(book);
         return bookInfo.getAmountInInventory();
 
@@ -90,7 +92,7 @@ public class Inventory {
 	 * @Post @pre @Param book.getAmountInInventory - 1 == @Post @Param book.getAmountInInventory()
 	 */
 	//	protected only for tests need to change back to private!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    private void removeBook (String book) {
+    protected void removeBook (String book) {
 		BookInventoryInfo bookInfo = inv.getBook(book);
 		if (bookInfo != null)
 			bookInfo.take();
@@ -101,7 +103,7 @@ public class Inventory {
 	 */
 	private BookInventoryInfo getBook (String book) {
         for (BookInventoryInfo bookInfo : inv.books) {
-            if (book == bookInfo.getBookTitle())
+            if (book.equals(bookInfo.getBookTitle()))
                 return bookInfo;
         }
         return null;
@@ -134,7 +136,7 @@ public class Inventory {
      * This method is called by the main method in order to generate the output.
      */
 	public void printInventoryToFile(String filename){
-		HashMap<String,Integer> chm = new HashMap<String,Integer>();
+		HashMap<String,Integer> chm = new HashMap<>();
 		for (BookInventoryInfo bit : books)
 			chm.put(bit.getBookTitle(), bit.getAmountInInventory());
 		try{
