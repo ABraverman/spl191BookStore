@@ -16,7 +16,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ResourcesHolder {
 	private static final ResourcesHolder rh = new ResourcesHolder();
 	private LinkedBlockingQueue<DeliveryVehicle> availableVehicles;
-	private LinkedBlockingQueue<DeliveryVehicle> unavailableVehicles;
 	private ConcurrentLinkedQueue<Future<DeliveryVehicle>> futures;
 	
 	/**
@@ -28,7 +27,6 @@ public class ResourcesHolder {
 
 	private ResourcesHolder () {
 		availableVehicles = new LinkedBlockingQueue<>();
-		unavailableVehicles = new LinkedBlockingQueue<>();
 		futures = new ConcurrentLinkedQueue<>();
 	}
 	
@@ -60,7 +58,6 @@ public class ResourcesHolder {
 		if (f != null)
 			futures.poll().resolve(vehicle);
 		else {
-			unavailableVehicles.remove(vehicle);
 			availableVehicles.add(vehicle);
 		}
 

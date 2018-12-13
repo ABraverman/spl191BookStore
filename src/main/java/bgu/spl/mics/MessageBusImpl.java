@@ -45,11 +45,14 @@ public class MessageBusImpl implements MessageBus {
 
 	}
 
+//	maybe remove notify!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	private void subscribe(Class<? extends Message> type, MicroService m) {
 		eventsToSubscribers.putIfAbsent(type,new ConcurrentLinkedQueue<>());
     	if (!eventsToSubscribers.get(type).contains(m))
             eventsToSubscribers.get(type).add(m);
-        eventsToSubscribers.notifyAll();
+    	synchronized (eventsToSubscribers) {
+			eventsToSubscribers.notifyAll();
+		}
 		subscribersToEvents.putIfAbsent(m,new ConcurrentLinkedQueue<>());
         if (!subscribersToEvents.get(m).contains(type))
             subscribersToEvents.get(m).add(type);
@@ -63,6 +66,7 @@ public class MessageBusImpl implements MessageBus {
 		futures.remove(e);
 	}
 
+//	maybe remove wait!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	@Override
 	public void sendBroadcast(Broadcast b) {
 		while (!eventsToSubscribers.containsKey(b.getClass())) {
@@ -110,7 +114,9 @@ public class MessageBusImpl implements MessageBus {
 	public void unregister(MicroService m) {
 		if (subscribersToEvents.containsKey(m)) {
 			for (Class<? extends Message> mes : subscribersToEvents.get(m)) {
-				eventsToSubscribers.get(mes).remove(m);
+				synchronized (eventsToSubscribers.get(mes)) {
+					eventsToSubscribers.get(mes).remove(m);
+				}
 			}
 		}
 		LinkedBlockingQueue<Message> tmp = messagesQueues.remove(m);
