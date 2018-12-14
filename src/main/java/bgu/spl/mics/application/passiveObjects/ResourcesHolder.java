@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.Future;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -27,7 +28,7 @@ public class ResourcesHolder {
 
 	private ResourcesHolder () {
 		availableVehicles = new LinkedBlockingQueue<>();
-		futures = new ConcurrentLinkedQueue<>();
+        futures = new ConcurrentLinkedQueue<>();
 	}
 	
 	/**
@@ -40,10 +41,10 @@ public class ResourcesHolder {
 	public Future<DeliveryVehicle> acquireVehicle() {
 		Future<DeliveryVehicle> f = new Future<>();
 		DeliveryVehicle vehicle = availableVehicles.poll();
-			if (vehicle != null)
-				f.resolve(vehicle);
-			else
-				futures.add(f);
+		if (vehicle != null)
+			f.resolve(vehicle);
+		else
+		    futures.add(f);
 		return f;
 	}
 	
@@ -56,16 +57,11 @@ public class ResourcesHolder {
 	public void releaseVehicle(DeliveryVehicle vehicle) {
 		Future<DeliveryVehicle> f = futures.poll();
 		if (f != null)
-			f.resolve(vehicle);
-		else {
-			availableVehicles.add(vehicle);
-		}
-
-
-
-
-
+		    f.resolve(vehicle);
+		else
+	        availableVehicles.add(vehicle);
 	}
+
 
 	/** 
      * Receives a collection of vehicles and stores them.

@@ -1,8 +1,11 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Messages.*;
 import bgu.spl.mics.application.passiveObjects.*;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * ResourceService is in charge of the store resources - the delivery vehicles.
@@ -16,20 +19,27 @@ import bgu.spl.mics.application.passiveObjects.*;
 public class ResourceService extends MicroService{
 
 	private ResourcesHolder resourcesHolder;
+	private ConcurrentLinkedQueue<Future<DeliveryVehicle>> waitingFutures;
 
 	public ResourceService(String name) {
 		super(name);
 		resourcesHolder = ResourcesHolder.getInstance();
+		waitingFutures = new ConcurrentLinkedQueue<>();
 	}
 
 	@Override
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class, br -> {
-			if (br.getTick() >= br.getDuration())
+			if (br.getTick() >= br.getDuration()) {
+				for (Future<DeliveryVehicle> f : waitingFutures)
+					f.resolve(null);
 				this.terminate();
+			}
 		});
 
-		subscribeEvent(AcquireVehicleEvent.class, ev -> complete(ev, resourcesHolder.acquireVehicle()));
+		subscribeEvent(AcquireVehicleEvent.class, ev -> {
+			complete(ev, resourcesHolder.acquireVehicle());
+		});
 
 		subscribeEvent(ReleaseVehicleEvent.class, ev -> {
 			resourcesHolder.releaseVehicle(ev.getDeliveryVehicle());
