@@ -13,7 +13,7 @@ public class InputObj {
 	}
 	
 	public DeliveryVehicle[] getInitialResources(){
-		return initialResources.getVehicles();
+		return initialResources[0].getVehicles();
 	}
 	
 	public int getSpeed(){
