@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,19 +15,9 @@ public class Customer {
 	private String address;
 	private int distance;
 	private List<OrderReceipt> receipts;
-	private int creditCard;
-	private AtomicInteger availableAmountInCreditCard;
-
-	public Customer(int id, String name, String address,int distance,int creditCard, int availableAmount){
-		this.id = id;
-		this.name = name;
-		this.address = address;
-		this.distance = distance;
-		this.receipts = new LinkedList<>();
-		this.creditCard = creditCard;
-		this.availableAmountInCreditCard = new AtomicInteger(availableAmount);
-
-	}
+	private CreditCard creditCard;
+	private OrderSchedule[] orderSchedule;
+		
 	/**
      * Retrieves the name of the customer.
      */
@@ -73,23 +62,31 @@ public class Customer {
      * @return Amount of money left.   
      */
 	public int getAvailableCreditAmount() {
-		return availableAmountInCreditCard.get();
+		return creditCard.getAvailableAmountInCreditCard().get();
 	}
 	
 	/**
      * Retrieves this customers credit card serial number.    
      */
 	public int getCreditNumber() {
+		return creditCard.getCreditCardNumber	();
+	}
+	
+	public CreditCard getCreditCard(){
 		return creditCard;
+	}
+	
+	public OrderSchedule[] getOrderSchedule(){
+		return orderSchedule;
 	}
 	/**
 	 * reduces the amount given from the credit balance
 	 * @param amount: amount of money to reduce from credit balance
 	 */
 	synchronized public void decrementCreditBalance(int amount){
-		int tmp = availableAmountInCreditCard.get();
-		while (!availableAmountInCreditCard.compareAndSet(tmp,tmp-amount))
-			tmp = availableAmountInCreditCard.get();
+		int tmp = creditCard.getAvailableAmountInCreditCard().get();
+		while (!creditCard.getAvailableAmountInCreditCard().compareAndSet(tmp,tmp-amount))
+			tmp = creditCard.getAvailableAmountInCreditCard().get();
 	}
 
 	public void addReceipt( OrderReceipt r) {
@@ -98,9 +95,45 @@ public class Customer {
 
 
 	public String toString() {
-		String out = "Id: " + id + " name: " + name + " address: " + address + " distance: " + this.distance + " creditcard: " + creditCard + " available Amount In CreditCard" + availableAmountInCreditCard + " receipts: " + this.receipts.toString();
+		String rec;
+		if (receipts == null)
+			rec = "";
+		else
+			rec = receipts.toString();
+		String out = "Id: " + id + " name: " + name + " address: " + address + " distance: " + this.distance + " creditcard: " + creditCard.toString() + " receipts: " + rec + "\n";
+		for (int i=0;i<orderSchedule.length;i++)
+			out += orderSchedule[i].toString() + "\n";
 		return out;
 	}
+}
+
+class CreditCard{
+	private int number;
+	private AtomicInteger amount;
 	
+	public CreditCard(int number, int amount){
+		this.number = number;
+		this.amount = new AtomicInteger(number);
+	}
 	
+	public int getCreditCardNumber(){
+		return this.number;
+	}
+	
+	public AtomicInteger getAvailableAmountInCreditCard(){
+		return amount;
+	}
+	
+	public String toString(){
+		return "Credit Number: " + number + ", Amount: " + amount;
+	}
+}
+
+class OrderSchedule{
+	private String bookTitle;
+	private int tick;
+	
+	public String toString(){
+		return "Title: " + bookTitle + ", Tick: " + tick;
+	}
 }

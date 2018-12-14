@@ -59,7 +59,8 @@ public class BookInventoryInfo {
         return false;
     }
 	
-	
-
+	public String toString(){
+		return "Title: " + bookTitle + ", Amount: " + amount + ", Price: " + price;
+	}
 	
 }

@@ -45,4 +45,8 @@ public class DeliveryVehicle {
 		}
 		catch (InterruptedException e){}
 	}
+	
+	public String toString(){
+		return "License: " + license + ", Speed: " + speed;
+	}
 }
