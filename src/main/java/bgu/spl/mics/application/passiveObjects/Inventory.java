@@ -18,6 +18,7 @@ import java.util.HashMap;
 public class Inventory {
 
 	private static final Inventory inv = new Inventory();
+//	TODO: change from array
 	private BookInventoryInfo[] books;
 
 	private Inventory() {
@@ -58,6 +59,8 @@ public class Inventory {
      * 			The first should not change the state of the inventory while the 
      * 			second should reduce by one the number of books of the desired type.
      */
+
+//	TODO: cahnge to improve efficiency
 	public OrderResult take (String book) {
 		BookInventoryInfo bookInfo = getBook(book);
         if (bookInfo != null) {
