@@ -8,6 +8,38 @@ public class InputObj {
 	private vehicles[] initialResources;
 	private Services services;
 	
+	public BookInventoryInfo[] getInitialInventory(){
+		return initialInventory;
+	}
+	
+	public DeliveryVehicle[] getInitialResources(){
+		return initialResources.getVehicles();
+	}
+	
+	public int getSpeed(){
+		return services.getSpeed();
+	}
+	
+	public int getDuration(){
+		return services.getDuration();
+	}
+	
+	public int getSelling(){
+		return services.getSelling();
+	}
+	
+	public int getInventoryService(){
+		return services.getInventoryService();
+	}
+	
+	public int getLogistics(){
+		return services.getLogistics();
+	}
+	
+	public Customer[] getCustomers(){
+		return services.getCustomers();
+	}
+		
 	public String toString(){
 		String str = "";
 		for (int i=0;i<initialInventory.length;i++)
@@ -25,6 +57,10 @@ public class InputObj {
 class vehicles {
 	private DeliveryVehicle[] vehicles;
 	
+	public DeliveryVehicle[] getVehicles(){
+		return vehicles;
+	}
+	
 	public String toString(){
 		String str = "";
 		for (int i=0;i<vehicles.length;i++)
@@ -39,6 +75,30 @@ class Services{
 	private int inventoryService;
 	private int logistics;
 	private Customer[] customers;
+	
+	public int getSpeed(){
+		return time.getSpeed();
+	}
+	
+	public int getDuration(){
+		return time.getDuration();
+	}
+	
+	public int getSelling(){
+		return selling;
+	}
+	
+	public int getInventoryService(){
+		return inventoryService;
+	}
+	
+	public int getLogistics(){
+		return logistics;
+	}
+	
+	public Customer[] getCustomers(){
+		return customers;
+	}
 	
 	public String toString(){
 		String str = "";
@@ -56,6 +116,14 @@ class Services{
 class initTime{
 	private int speed;
 	private int duration;
+	
+	public int getSpeed(){
+		return speed;
+	}
+	
+	public int getDuration(){
+		return duration;
+	}
 	
 	public String toString(){
 		return "Speed: " + speed + ", Duration: " + duration;
