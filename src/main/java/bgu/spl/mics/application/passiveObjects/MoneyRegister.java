@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
@@ -18,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>
  * You can add ONLY private fields and methods to this class as you see fit.
  */
-public class MoneyRegister {
+public class MoneyRegister implements Serializable {
 	private static final MoneyRegister mr = new MoneyRegister();
 	private ConcurrentLinkedQueue<OrderReceipt> receipts;
 	

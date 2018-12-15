@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.LinkedList;
 import javafx.util.Pair;
@@ -11,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>
  * You may add fields and methods to this class as you see fit (including public methods).
  */
-public class Customer {
+public class Customer implements Serializable {
 	private int id;
 	private String name;
 	private String address;
@@ -112,7 +113,7 @@ public class Customer {
 	}
 }
 
-class CreditCard{
+class CreditCard implements Serializable{
 	private int number;
 	private AtomicInteger amount;
 	
@@ -134,7 +135,7 @@ class CreditCard{
 	}
 }
 
-class OrderSchedule{
+class OrderSchedule implements Serializable{
 	private String bookTitle;
 	private int tick;
 	
