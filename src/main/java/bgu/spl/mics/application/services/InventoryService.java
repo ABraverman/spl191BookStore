@@ -3,6 +3,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Messages.*;
 import bgu.spl.mics.application.passiveObjects.*;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * InventoryService is in charge of the book inventory and stock.
@@ -18,9 +19,10 @@ public class InventoryService extends MicroService{
 
 	private Inventory inventory;
 
-	public InventoryService( String name) {
+	public InventoryService( String name, CountDownLatch cdl) {
 		super(name);
 		inventory = Inventory.getInstance();
+		this.cdl = cdl;
 	}
 
 	@Override

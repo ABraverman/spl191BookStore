@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * APIService is in charge of the connection between a client and the store.
@@ -25,12 +26,12 @@ public class APIService extends MicroService{
 	private List<Pair<String,Integer>> orderSchedule;
 	private ConcurrentHashMap<Message, Future<OrderReceipt>> futures;
 
-	public APIService(String name, Customer c, List<Pair<String,Integer>> s) {
+	public APIService(String name, Customer c, CountDownLatch cdl) {
 		super(name);
 		this.customer = c;
-		this.orderSchedule = s;
+		this.orderSchedule = this.customer.getOrderSchedule();
 		futures = new ConcurrentHashMap<>();
-
+		this.cdl = cdl;
 	}
 
 	@Override

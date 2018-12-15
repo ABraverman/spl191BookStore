@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import java.util.List;
+import java.util.LinkedList;
+import javafx.util.Pair;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -76,8 +78,11 @@ public class Customer {
 		return creditCard;
 	}
 	
-	public OrderSchedule[] getOrderSchedule(){
-		return orderSchedule;
+	public List<Pair<String,Integer>> getOrderSchedule(){
+		List<Pair<String,Integer>> os = new LinkedList<Pair<String,Integer>>(); 
+		for (int i=0;i<orderSchedule.length;i++)
+			os.add(orderSchedule[i].getOrderSchedule());
+		return os;
 	}
 	/**
 	 * reduces the amount given from the credit balance
@@ -132,6 +137,10 @@ class CreditCard{
 class OrderSchedule{
 	private String bookTitle;
 	private int tick;
+	
+	public Pair<String,Integer> getOrderSchedule(){
+		return new Pair<String,Integer>(bookTitle,tick);
+	}
 	
 	public String toString(){
 		return "Title: " + bookTitle + ", Tick: " + tick;

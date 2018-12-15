@@ -3,6 +3,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Messages.*;
 import bgu.spl.mics.application.passiveObjects.*;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Logistic service in charge of delivering books that have been purchased to customers.
@@ -15,8 +16,9 @@ import bgu.spl.mics.application.passiveObjects.*;
  */
 public class LogisticsService extends MicroService {
 
-	public LogisticsService( String name) {
+	public LogisticsService( String name,CountDownLatch cdl) {
 		super(name);
+		this.cdl = cdl;
 	}
 
 	@Override

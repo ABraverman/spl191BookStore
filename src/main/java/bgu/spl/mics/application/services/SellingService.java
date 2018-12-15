@@ -5,6 +5,7 @@ import bgu.spl.mics.Message;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.Messages.*;
+import java.util.concurrent.CountDownLatch;
 
 
 /**
@@ -23,10 +24,11 @@ public class SellingService extends MicroService{
 	private int tick;
 
 
-	public SellingService(String name) {
+	public SellingService(String name, CountDownLatch cdl) {
 		super(name);
 		moneyRegister = MoneyRegister.getInstance();
 		tick = 0;
+		this.cdl = cdl;
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Messages.*;
 import bgu.spl.mics.application.passiveObjects.*;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * ResourceService is in charge of the store resources - the delivery vehicles.
@@ -17,9 +18,10 @@ public class ResourceService extends MicroService{
 
 	private ResourcesHolder resourcesHolder;
 
-	public ResourceService(String name) {
+	public ResourceService(String name, CountDownLatch cdl) {
 		super(name);
 		resourcesHolder = ResourcesHolder.getInstance();
+		this.cdl = cdl;
 	}
 
 	@Override

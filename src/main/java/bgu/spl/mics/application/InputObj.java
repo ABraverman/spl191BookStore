@@ -36,8 +36,16 @@ public class InputObj {
 		return services.getLogistics();
 	}
 	
+	public int getResourcesServer(){
+		return services.getResourcesService();
+	}
+	
 	public Customer[] getCustomers(){
 		return services.getCustomers();
+	}
+	
+	public int getNumServices(){
+		return services.getNumServices();
 	}
 		
 	public String toString(){
@@ -74,6 +82,7 @@ class Services{
 	private int selling;
 	private int inventoryService;
 	private int logistics;
+	private int resourcesService;
 	private Customer[] customers;
 	
 	public int getSpeed(){
@@ -96,10 +105,17 @@ class Services{
 		return logistics;
 	}
 	
+	public int getResourcesService(){
+		return resourcesService;
+	}
+	
 	public Customer[] getCustomers(){
 		return customers;
 	}
 	
+	public int getNumServices(){
+		return selling + inventoryService + logistics + resourcesService + customers.length;
+	}
 	public String toString(){
 		String str = "";
 		str += time.toString();
