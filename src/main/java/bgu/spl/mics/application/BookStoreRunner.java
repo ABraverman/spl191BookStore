@@ -12,7 +12,6 @@ import com.google.gson.Gson;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.services.*;
-import main.java.bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
 
 /** This is the Main class of the application. You should parse the input file, 
  * create the different instances of the objects, and run the system.
