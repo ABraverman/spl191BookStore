@@ -19,7 +19,7 @@ public class Customer implements Serializable {
 	private String name;
 	private String address;
 	private int distance;
-	private LinkedBlockingQueue<OrderReceipt> receipts = new LinkedBlockingQueue<OrderReceipt>();
+	private LinkedBlockingQueue<OrderReceipt> receipts = new LinkedBlockingQueue<>();
 	private CreditCard creditCard;
 	private OrderSchedule[] orderSchedule;
 		
@@ -57,8 +57,8 @@ public class Customer implements Serializable {
      * <p>
      * @return A list of receipts.
      */
-	public LinkedBlockingQueue<OrderReceipt> getCustomerReceiptList() {
-		return receipts;
+	public List<OrderReceipt> getCustomerReceiptList() {
+		return new LinkedList<OrderReceipt>(receipts);
 	}
 	
 	/**
