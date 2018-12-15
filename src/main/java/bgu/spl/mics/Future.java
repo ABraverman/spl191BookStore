@@ -1,6 +1,7 @@
 package bgu.spl.mics;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A Future object represents a promised result - an object that will
@@ -12,13 +13,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class Future<T> {
 	
-	private boolean isDone;
+	private AtomicBoolean isDone;
 	private T result;
 	/**
 	 * This should be the the only public constructor in this class.
 	 */
 	public Future() {
-		isDone = false;
+		isDone = new AtomicBoolean(false);
 		result = null;
 	}
 	
@@ -32,14 +33,14 @@ public class Future<T> {
      *
      */
 	public T get() {
-		synchronized (this) {
-			while (!isDone()) {
-				try {
+		while (!isDone()) {
+			try {
+				synchronized (this) {
 					this.wait();
-				} catch (InterruptedException e) { }
-			}
-			return result;
+				}
+			} catch (InterruptedException e) { }
 		}
+		return result;
 	}
 	
 	/**
@@ -47,9 +48,10 @@ public class Future<T> {
      * @post isdone = true, result = @param result
      */
 	public void resolve (T result) {
+
+		this.result = result;
+		isDone.set(true);
 		synchronized (this) {
-			this.result = result;
-			isDone = true;
 			this.notifyAll();
 		}
 	}
@@ -58,7 +60,7 @@ public class Future<T> {
      * @return true if this object has been resolved, false otherwise
      */
 	public boolean isDone() {
-		return isDone;
+		return isDone.get();
 	}
 	
 	/**
