@@ -1,19 +1,27 @@
 package bgu.spl.mics.application;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import com.google.gson.Gson;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.*;
+import bgu.spl.mics.application.services.*;
+import main.java.bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
 
 /** This is the Main class of the application. You should parse the input file, 
  * create the different instances of the objects, and run the system.
  * In the end, you should output serialized objects.
  */
 public class BookStoreRunner {
+	public static CountDownLatch initCdl;
+	public static CountDownLatch terminationCdl;
+	
     public static void main(String[] args) {
     	if (args.length != 5){
     		throw new IllegalArgumentException("Program was given " + args.length + " arguments, 5 are needed");
@@ -24,49 +32,87 @@ public class BookStoreRunner {
 	    	Gson json = new Gson();
 	    	InputObj input = json.fromJson(reader, InputObj.class);
 	    	
-	    	int numOfServices = input.getNumServices(),countService = 0;
-	    	CountDownLatch cdl = new CountDownLatch(numOfServices);
-	    	MicroService[] services = new MicroService[numOfServices+1];
+	    	Inventory inv = Inventory.getInstance();
+	    	inv.load(input.getInitialInventory());
+	    	ResourcesHolder rh = ResourcesHolder.getInstance();
+	    	rh.load(input.getInitialResources());
 	    	
-	    	for (int i=0;i<input.getInventorySelling();i++){
-	    		services[countService] = new SellingService("s"+countService,cdl);
-	    		services[countService].start();
+	    	int numOfServices = input.getNumServices(),countService = 0;
+	    	initCdl = new CountDownLatch(numOfServices);
+	    	terminationCdl = new CountDownLatch(numOfServices+1);
+	    	
+	    	String tempThreadName;
+	    	for (int i=0;i<input.getSelling();i++){
+	    		tempThreadName = "s"+countService;
+	    		(new Thread(new SellingService(tempThreadName),tempThreadName)).start();
 	    		countService++;
 	    	}
-	    	for (int i=0;i<input.getInventorySelling();i++){
-	    		services[countService] = new InventoryService("s"+countService,cdl);
-	    		services[countService].start();
+	    	for (int i=0;i<input.getInventoryService();i++){
+	    		tempThreadName = "s"+countService;
+	    		(new Thread(new InventoryService(tempThreadName),tempThreadName)).start();
 	    		countService++;
 	    	}
 	    	for (int i=0;i<input.getLogistics();i++){
-	    		services[countService] = new LogisticsService("s"+countService,cdl);
-	    		services[countService].start();
+	    		tempThreadName = "s"+countService;
+	    		(new Thread(new LogisticsService(tempThreadName),tempThreadName)).start();
 	    		countService++;
 	    	}
-	    	for (int i=0;i<input.getResourcesService();i++){
-	    		services[countService] = new ResourcesService("s"+countService,cdl);
-	    		services[countService].start();
+	    	for (int i=0;i<input.getResourcesServer();i++){
+	    		tempThreadName = "s"+countService;
+	    		(new Thread(new ResourceService(tempThreadName),tempThreadName)).start();
 	    		countService++;
 	    	}
 	    	for (int i=0;i<input.getCustomers().length;i++){
-	    		services[countService] = new APIService("s"+countService,input.getCustomers()[i],cdl);
-	    		services[countService].start();
+	    		tempThreadName = "s"+countService;
+	    		(new Thread(new APIService(tempThreadName,input.getCustomers()[i]),tempThreadName)).start();
 	    		countService++;
 	    	}
-	    	cdl.await();
-	    	services[countService] = new TimeService("s"+countService,input.getSpeed(),input.getDuration());
-	    	
-//	    	System.out.println(input);
-	    	Inventory i = Inventory.getInstance();
-	    	i.load(input.getInitialInventory());
-	    	ResourcesHolder rh = ResourcesHolder.getInstance();
-	    	rh.load(input.getInitialResources());
+	    	initCdl.await();
+	    	tempThreadName = "s"+countService;
+	    	(new Thread(new TimeService(tempThreadName,input.getSpeed(),input.getDuration()),tempThreadName)).start();
+	    	terminationCdl.await();
+	    	printCustomers(input.getCustomers(),args[1]);
+	    	inv.printInventoryToFile(args[2]);
+	    	MoneyRegister.getInstance().printOrderReceipts(args[3]);
+	    	printMoneyRegister(args[4]);
 	    	
     	}
     	catch (FileNotFoundException e){
     		e.printStackTrace();
     	}
+    	catch (InterruptedException e){
+    		e.printStackTrace();
+    	}
     	
     	
+    }
+    
+    private static void printCustomers(Customer[] customers,String filePath){
+    	HashMap<Integer,Customer> cushm = new HashMap<>();
+		for (Customer c : customers)
+			cushm.put(c.getId(), c);
+		try{
+			FileOutputStream outFile = new FileOutputStream(filePath);
+			ObjectOutputStream mapWriter = new ObjectOutputStream(outFile);
+			mapWriter.writeObject(cushm);
+			mapWriter.close();
+			outFile.close();
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+    }
+    
+    private static void printMoneyRegister(String filePath){
+		try{
+			FileOutputStream outFile = new FileOutputStream(filePath);
+			ObjectOutputStream mapWriter = new ObjectOutputStream(outFile);
+			mapWriter.writeObject(MoneyRegister.getInstance());
+			mapWriter.close();
+			outFile.close();
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
     }
 }

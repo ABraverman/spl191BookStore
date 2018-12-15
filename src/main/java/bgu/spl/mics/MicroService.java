@@ -2,7 +2,7 @@ package bgu.spl.mics;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.CountDownLatch;
+import bgu.spl.mics.application.BookStoreRunner;
 
 /**
  * The MicroService is an abstract class that any micro-service in the system
@@ -28,7 +28,6 @@ public abstract class MicroService implements Runnable {
     private final String name;
     private  MessageBusImpl bus;
     private ConcurrentHashMap<Class<? extends Message>, Callback> callBacks;
-    private CountDownLatch cdl;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -39,7 +38,7 @@ public abstract class MicroService implements Runnable {
         this.bus = MessageBusImpl.getInstance();
         this.callBacks = new ConcurrentHashMap<>();
     }
-
+    
     /**
      * Subscribes to events of type {@code type} with the callback
      * {@code callback}. This means two things:
@@ -161,8 +160,6 @@ public abstract class MicroService implements Runnable {
     public final void run() {
         bus.register(this);
         initialize();
-        if (cdl != null)
-        	cdl.countDown();
         while (!terminated) {
             try {
                 Message mes = bus.awaitMessage(this);
@@ -170,6 +167,7 @@ public abstract class MicroService implements Runnable {
             } catch (InterruptedException e) {}
         }
         bus.unregister(this);
+        BookStoreRunner.terminationCdl.countDown();
     }
 
 }

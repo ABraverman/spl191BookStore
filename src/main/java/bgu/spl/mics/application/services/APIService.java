@@ -4,12 +4,11 @@ import bgu.spl.mics.*;
 import bgu.spl.mics.application.Messages.*;
 import bgu.spl.mics.application.passiveObjects.*;
 import javafx.util.Pair;
-
+import bgu.spl.mics.application.BookStoreRunner;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * APIService is in charge of the connection between a client and the store.
@@ -26,12 +25,11 @@ public class APIService extends MicroService{
 	private List<Pair<String,Integer>> orderSchedule;
 	private ConcurrentHashMap<Message, Future<OrderReceipt>> futures;
 
-	public APIService(String name, Customer c, CountDownLatch cdl) {
+	public APIService(String name, Customer c) {
 		super(name);
 		this.customer = c;
 		this.orderSchedule = this.customer.getOrderSchedule();
 		futures = new ConcurrentHashMap<>();
-		this.cdl = cdl;
 	}
 
 	@Override
@@ -65,7 +63,7 @@ public class APIService extends MicroService{
 
 			}
 		});
-		
+		BookStoreRunner.initCdl.countDown();
 	}
 
 }

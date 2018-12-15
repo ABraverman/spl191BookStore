@@ -1,11 +1,11 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.Future;
+import bgu.spl.mics.application.BookStoreRunner;
 import bgu.spl.mics.Message;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.Messages.*;
-import java.util.concurrent.CountDownLatch;
 
 
 /**
@@ -24,11 +24,10 @@ public class SellingService extends MicroService{
 	private int tick;
 
 
-	public SellingService(String name, CountDownLatch cdl) {
+	public SellingService(String name) {
 		super(name);
 		moneyRegister = MoneyRegister.getInstance();
 		tick = 0;
-		this.cdl = cdl;
 	}
 
 	@Override
@@ -71,7 +70,7 @@ public class SellingService extends MicroService{
             complete(ev, null);
 
 		});
-		
+		BookStoreRunner.initCdl.countDown();
 	}
 
 }

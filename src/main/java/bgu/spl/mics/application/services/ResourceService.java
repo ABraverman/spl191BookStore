@@ -1,10 +1,10 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.Future;
+import bgu.spl.mics.application.BookStoreRunner;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Messages.*;
 import bgu.spl.mics.application.passiveObjects.*;
-import java.util.concurrent.CountDownLatch;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -22,10 +22,9 @@ public class ResourceService extends MicroService{
 	private ResourcesHolder resourcesHolder;
 	private ConcurrentLinkedQueue<Future<DeliveryVehicle>> waitingFutures;
 
-	public ResourceService(String name, CountDownLatch cdl) {
+	public ResourceService(String name) {
 		super(name);
 		resourcesHolder = ResourcesHolder.getInstance();
-		this.cdl = cdl;
 		waitingFutures = new ConcurrentLinkedQueue<>();
 	}
 
@@ -47,7 +46,7 @@ public class ResourceService extends MicroService{
 			resourcesHolder.releaseVehicle(ev.getDeliveryVehicle());
 			complete(ev , null);
 		});
-		
+		BookStoreRunner.initCdl.countDown();
 	}
 
 }
