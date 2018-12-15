@@ -3,7 +3,6 @@ package bgu.spl.mics;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -62,8 +61,11 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> void complete(Event<T> e, T result) {
-		futures.get(e).resolve(result);
-		futures.remove(e);
+		Future f = futures.get(e);
+		if (f != null) {
+			f.resolve(result);
+			futures.remove(e);
+		}
 	}
 
 //	maybe remove wait!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -101,6 +103,7 @@ public class MessageBusImpl implements MessageBus {
 			return future;
 		}
 		else  {
+			futures.remove(e);
 			return null;
 		}
 	}
