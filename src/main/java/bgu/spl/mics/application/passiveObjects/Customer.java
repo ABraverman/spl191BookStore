@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.LinkedList;
 import javafx.util.Pair;
+
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -17,7 +19,7 @@ public class Customer implements Serializable {
 	private String name;
 	private String address;
 	private int distance;
-	private List<OrderReceipt> receipts;
+	private LinkedBlockingQueue<OrderReceipt> receipts = new LinkedBlockingQueue<OrderReceipt>();
 	private CreditCard creditCard;
 	private OrderSchedule[] orderSchedule;
 		
@@ -55,7 +57,7 @@ public class Customer implements Serializable {
      * <p>
      * @return A list of receipts.
      */
-	public List<OrderReceipt> getCustomerReceiptList() {
+	public LinkedBlockingQueue<OrderReceipt> getCustomerReceiptList() {
 		return receipts;
 	}
 	
