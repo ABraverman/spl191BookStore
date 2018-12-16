@@ -36,7 +36,7 @@ public class InputObj {
 		return services.getLogistics();
 	}
 	
-	public int getResourcesServer(){
+	public int getResourcesService(){
 		return services.getResourcesService();
 	}
 	
