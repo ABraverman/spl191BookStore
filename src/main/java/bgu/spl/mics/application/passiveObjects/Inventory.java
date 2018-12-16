@@ -74,14 +74,10 @@ public class Inventory {
 		BookInventoryInfo bookInfo = getBook(book);
         if (bookInfo != null) {
             synchronized (bookInfo) {
-                if (checkAvailability(book) > 0) {
-                    removeBook(book);
-                    return OrderResult.SUCCESSFULLY_TAKEN;
-                }
+                return bookInfo.take();
             }
         }
 		return OrderResult.NOT_IN_STOCK;
-
 	}
 
 	/**

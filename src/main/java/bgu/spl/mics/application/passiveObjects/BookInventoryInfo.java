@@ -13,13 +13,13 @@ public class BookInventoryInfo implements Serializable {
 
 	private String bookTitle;
 	private AtomicInteger amount;
-	private AtomicInteger price;
+	private int price;
 
 	public BookInventoryInfo(String t ,int a, int p) {
 
 		bookTitle = t;
 		amount = new AtomicInteger(a);
-		price = new AtomicInteger(p);
+		price = p;
 
 	}
 	/**
@@ -49,15 +49,16 @@ public class BookInventoryInfo implements Serializable {
      */
 	public int getPrice() {
 
-		return price.get();
+		return price;
 	}
 
-	public boolean take() {
+	public OrderResult take() {
+
 	    if (amount.get() > 0) {
             amount.decrementAndGet();
-            return true;
+            return OrderResult.SUCCESSFULLY_TAKEN;
         }
-        return false;
+        return OrderResult.NOT_IN_STOCK;
     }
 	
 	public String toString(){
