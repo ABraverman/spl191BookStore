@@ -50,14 +50,14 @@ public class Inventory {
 
 //	TODO: ONLY FOR TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	protected BookInventoryInfo[ ] getBooks(){
+	public BookInventoryInfo[ ] getBooks(){
 		BookInventoryInfo[] booksArray = new BookInventoryInfo[books.size()];
 		int position = 0;
 		for (BookInventoryInfo b : books){
 			booksArray[position] = b;
 			position++;
 		}
-		return booksArray;			
+		return booksArray;
     }
 
 	/**
