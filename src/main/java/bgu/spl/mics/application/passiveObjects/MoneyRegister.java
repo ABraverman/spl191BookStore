@@ -93,4 +93,9 @@ public class MoneyRegister implements Serializable {
 	public String toString() {
 		return receipts.toString();
 	}
+
+//	TODO: Remove, only for testing
+	public List<OrderReceipt> getOrderReceipts(){
+		return new LinkedList<OrderReceipt>(receipts);
+	}
 }

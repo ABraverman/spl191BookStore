@@ -57,7 +57,7 @@ public class Inventory {
 			booksArray[position] = b;
 			position++;
 		}
-		return booksArray;			
+		return booksArray;
     }
 
 	/**
