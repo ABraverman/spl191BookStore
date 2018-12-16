@@ -36,6 +36,7 @@ public class BookStoreRunner {
 	    	Gson json = new Gson();
 	    	InputObj input = json.fromJson(reader, InputObj.class);
 	    	
+	    	Customer[] custs = new Customer[input.getCustomers().length];
 	    	Inventory inv = Inventory.getInstance();
 	    	inv.load(input.getInitialInventory());
 	    	ResourcesHolder rh = ResourcesHolder.getInstance();
@@ -74,6 +75,7 @@ public class BookStoreRunner {
 	    	for (int i=0;i<input.getCustomers().length;i++){
 	    		tempThreadName = "api " + countService;
 	    		(new Thread(new APIService(tempThreadName,input.getCustomers()[i]), "T " + tempThreadName)).start();
+	    		System.out.println(input.getCustomers()[i].getAvailableCreditAmount());
 	    		countService++;
 	    	}
 	    	initCdl.await();
@@ -87,6 +89,8 @@ public class BookStoreRunner {
 	    	int numOfTest = Integer.parseInt(args[0].replace(new File(args[0]).getParent(), "").replace("/", "").replace(".json", ""));
             String dir = new File(args[1]).getParent() + "/" + numOfTest + " - ";
             Customer[] customers1 = input.getCustomers();
+            for (int i=0;i<customers1.length;i++)
+            	System.out.println(customers1[i].getAvailableCreditAmount());
             Arrays.sort(customers1, Comparator.comparing(Customer::getName));
             String str_custs = Arrays.toString(customers1);
             str_custs = str_custs.replaceAll(", ", "\n---------------------------\n").replace("[", "").replace("]", "");
