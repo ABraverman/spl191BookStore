@@ -36,31 +36,36 @@ public class BookStoreRunner {
 	    	ResourcesHolder rh = ResourcesHolder.getInstance();
 	    	rh.load(input.getInitialResources());
 	    	
-	    	int numOfServices = input.getNumServices(),countService = 0;
+	    	int numOfServices = input.getNumServices(),countService;
 	    	initCdl = new CountDownLatch(numOfServices);
 	    	terminationCdl = new CountDownLatch(numOfServices+1);
-	    	
 	    	String tempThreadName;
+	    	
+	    	countService = 1;
 	    	for (int i=0;i<input.getSelling();i++){
-	    		tempThreadName = "s"+countService;
-	    		(new Thread(new SellingService(tempThreadName),tempThreadName)).start();
+	    		tempThreadName = "selling " + countService;
+	    		(new Thread(new SellingService(tempThreadName),tempThreadName + " T")).start();
 	    		countService++;
 	    	}
+	    	countService = 1;
 	    	for (int i=0;i<input.getInventoryService();i++){
-	    		tempThreadName = "s"+countService;
-	    		(new Thread(new InventoryService(tempThreadName),tempThreadName)).start();
+	    		tempThreadName = "inventory " + countService;
+	    		(new Thread(new InventoryService(tempThreadName),tempThreadName + " T")).start();
 	    		countService++;
 	    	}
+	    	countService = 1;
 	    	for (int i=0;i<input.getLogistics();i++){
-	    		tempThreadName = "s"+countService;
-	    		(new Thread(new LogisticsService(tempThreadName),tempThreadName)).start();
+	    		tempThreadName = "logistics " + countService;
+	    		(new Thread(new LogisticsService(tempThreadName),tempThreadName + " T")).start();
 	    		countService++;
 	    	}
-	    	for (int i=0;i<input.getResourcesServer();i++){
-	    		tempThreadName = "s"+countService;
-	    		(new Thread(new ResourceService(tempThreadName),tempThreadName)).start();
+	    	countService = 1;
+	    	for (int i=0;i<input.getResourcesService();i++){
+	    		tempThreadName = "resources " + countService;
+	    		(new Thread(new ResourceService(tempThreadName),tempThreadName + " T")).start();
 	    		countService++;
 	    	}
+	    	countService = 1;
 	    	for (int i=0;i<input.getCustomers().length;i++){
 	    		tempThreadName = "s"+countService;
 	    		(new Thread(new APIService(tempThreadName,input.getCustomers()[i]),tempThreadName)).start();
@@ -68,7 +73,7 @@ public class BookStoreRunner {
 	    	}
 	    	initCdl.await();
 	    	tempThreadName = "s"+countService;
-	    	(new Thread(new TimeService(tempThreadName,input.getSpeed(),input.getDuration()),tempThreadName)).start();
+	    	(new Thread(new TimeService("time",input.getSpeed(),input.getDuration()),"time T")).start();
 	    	terminationCdl.await();
 	    	printCustomers(input.getCustomers(),args[1]);
 	    	inv.printInventoryToFile(args[2]);

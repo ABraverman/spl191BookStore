@@ -94,7 +94,10 @@ public class MessageBusImpl implements MessageBus {
 		if (eventsToSubscribers.containsKey(e.getClass())){
 			synchronized (queue) {
 				microService = queue.poll();
-				queue.add(microService);
+				if (microService != null)
+					queue.add(microService);
+				else
+					return null;
 			}
 
 			if (microService != null)
@@ -124,7 +127,9 @@ public class MessageBusImpl implements MessageBus {
 		}
 		LinkedBlockingQueue<Message> tmp = messagesQueues.remove(m);
 		for (Message message : tmp) {
-			futures.get(message).resolve(null);
+			Future f = futures.get(message);
+			if (f != null)
+				f.resolve(null);
 		}
 	}
 
