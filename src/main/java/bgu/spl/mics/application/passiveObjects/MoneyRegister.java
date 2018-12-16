@@ -33,7 +33,6 @@ public class MoneyRegister implements Serializable {
 	public static MoneyRegister getInstance() {
 		return mr;
 	}
-
 	
 	/**
      * Saves an order receipt in the money register.
