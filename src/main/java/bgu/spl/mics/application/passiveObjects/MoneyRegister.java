@@ -90,9 +90,9 @@ public class MoneyRegister implements Serializable {
 	public String toString() {
 		String out = "###### MONEY REGISTER ######\n";
 		for (OrderReceipt or: receipts) {
-			out += or.toString();
+			out += or.toString() + "\n";
 		}
-		out+="\n###### MONEY REGISTER ######\n";
+		out+="###### MONEY REGISTER ######\n";
 		return out;
 	}
 
