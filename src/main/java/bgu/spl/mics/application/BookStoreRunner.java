@@ -44,36 +44,36 @@ public class BookStoreRunner {
 	    	countService = 1;
 	    	for (int i=0;i<input.getSelling();i++){
 	    		tempThreadName = "selling " + countService;
-	    		(new Thread(new SellingService(tempThreadName),tempThreadName + " T")).start();
+	    		(new Thread(new SellingService(tempThreadName), "T " + tempThreadName)).start();
 	    		countService++;
 	    	}
 	    	countService = 1;
 	    	for (int i=0;i<input.getInventoryService();i++){
 	    		tempThreadName = "inventory " + countService;
-	    		(new Thread(new InventoryService(tempThreadName),tempThreadName + " T")).start();
+	    		(new Thread(new InventoryService(tempThreadName), "T " + tempThreadName)).start();
 	    		countService++;
 	    	}
 	    	countService = 1;
 	    	for (int i=0;i<input.getLogistics();i++){
 	    		tempThreadName = "logistics " + countService;
-	    		(new Thread(new LogisticsService(tempThreadName),tempThreadName + " T")).start();
+	    		(new Thread(new LogisticsService(tempThreadName), "T " + tempThreadName)).start();
 	    		countService++;
 	    	}
 	    	countService = 1;
 	    	for (int i=0;i<input.getResourcesService();i++){
 	    		tempThreadName = "resources " + countService;
-	    		(new Thread(new ResourceService(tempThreadName),tempThreadName + " T")).start();
+	    		(new Thread(new ResourceService(tempThreadName), "T " + tempThreadName)).start();
 	    		countService++;
 	    	}
 	    	countService = 1;
 	    	for (int i=0;i<input.getCustomers().length;i++){
 	    		tempThreadName = "api " + countService;
-	    		(new Thread(new APIService(tempThreadName,input.getCustomers()[i]),tempThreadName + " T")).start();
+	    		(new Thread(new APIService(tempThreadName,input.getCustomers()[i]), "T " + tempThreadName)).start();
 	    		countService++;
 	    	}
 	    	initCdl.await();
 	    	tempThreadName = "s"+countService;
-	    	(new Thread(new TimeService("time",input.getSpeed(),input.getDuration()),"time T")).start();
+	    	(new Thread(new TimeService("time",input.getSpeed(),input.getDuration()),"T time")).start();
 	    	terminationCdl.await();
 	    	printCustomers(input.getCustomers(),args[1]);
 	    	inv.printInventoryToFile(args[2]);
