@@ -33,7 +33,8 @@ public class ResourceService extends MicroService{
 		subscribeBroadcast(TickBroadcast.class, br -> {
 			if (br.getTick() >= br.getDuration()) {
 				for (Future<DeliveryVehicle> f : waitingFutures)
-					f.resolve(null);
+					if (!f.isDone())
+				        f.resolve(null);
 				this.terminate();
 			}
 		});
