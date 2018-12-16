@@ -33,9 +33,9 @@ public class LogisticsService extends MicroService {
 			Future<Future<DeliveryVehicle>> future = sendEvent(new AcquireVehicleEvent());
 			if (future != null && future.get() != null && future.get().get() != null) {
 				DeliveryVehicle deliveryVehicle = future.get().get();
-				System.out.println(testingName + " ### vehicle sent ###");
+				System.out.println(testingName + " ### vehicle " + deliveryVehicle.getLicense() + " sent ###");
 				deliveryVehicle.deliver(ev.getCustomer().getAddress(), ev.getCustomer().getDistance());
-				System.out.println(testingName + " ### vehicle returned ###");
+				System.out.println(testingName + " ### vehicle " + deliveryVehicle.getLicense() + " returned ###");
 				sendEvent(new ReleaseVehicleEvent(deliveryVehicle));
 			}
 			complete(ev, null);
