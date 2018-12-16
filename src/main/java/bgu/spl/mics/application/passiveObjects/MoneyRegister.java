@@ -87,6 +87,11 @@ public class MoneyRegister implements Serializable {
 
 	@Override
 	public String toString() {
-		return receipts.toString();
+		String out = "###### MONEY REGISTER ######\n";
+		for (OrderReceipt or: receipts) {
+			out += or.toString() + "\n";
+		}
+		out+="###### MONEY REGISTER ######\n";
+		return out;
 	}
 }
