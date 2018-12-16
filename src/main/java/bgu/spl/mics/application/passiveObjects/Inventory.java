@@ -47,7 +47,7 @@ public class Inventory {
 
 //	TODO: ONLY FOR TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	protected BookInventoryInfo[ ] getBooks(){
+	public BookInventoryInfo[ ] getBooks(){
 	    return books;
     }
 

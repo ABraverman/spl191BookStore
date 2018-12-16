@@ -34,6 +34,10 @@ public class MoneyRegister implements Serializable {
 		return mr;
 	}
 	
+	public List<OrderReceipt> getOrderReceipts(){
+		return new LinkedList<OrderReceipt>(receipts);
+	}
+	
 	/**
      * Saves an order receipt in the money register.
      * <p>   
