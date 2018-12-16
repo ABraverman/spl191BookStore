@@ -105,12 +105,18 @@ public class Customer implements Serializable {
 	public String toString() {
 		String rec;
 		if (receipts == null)
-			rec = "";
-		else
-			rec = receipts.toString();
-		String out = "Id: " + id + " name: " + name + " address: " + address + " distance: " + this.distance + " creditcard: " + creditCard.toString() + " receipts: " + rec + "\n";
+			rec = "#### NO RECEIPTS ####";
+		else{
+			rec = "#### RECEIPTS ####\n";
+			for (OrderReceipt or : receipts)
+				rec += or.toString() + "\n";
+			rec += "#### RECEIPTS ####\n";
+		}
+		String out = "Id: " + id + " creditcard: " + creditCard.toString() + "\n" + rec + "\n";
+		out += "#### ORDERS SCHEDULE ####\n";
 		for (int i=0;i<orderSchedule.length;i++)
 			out += orderSchedule[i].toString() + "\n";
+		out += "#### ORDERS SCHEDULE ####\n";
 		return out;
 	}
 }
