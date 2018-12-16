@@ -43,7 +43,9 @@ public class APIService extends MicroService{
 				for (Pair<String, Integer> p : orderSchedule) {
 					if (p.getValue() == br.getTick()) {
 						Event e = new BookOrderEvent(customer, p.getKey(), br.getTick());
-						futures.put(e, sendEvent(e));
+						Future future = sendEvent(e);
+						if (future != null)
+							futures.put(e,future);
 						eToRemove.add(p);
 					}
 				}
