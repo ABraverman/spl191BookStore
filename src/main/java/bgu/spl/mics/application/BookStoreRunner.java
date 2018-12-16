@@ -85,8 +85,10 @@ public class BookStoreRunner {
 //	    	MoneyRegister.getInstance().printOrderReceipts(args[3]);
 //	    	printMoneyRegister(args[4]);
 	    	System.out.println("###### Customers ######");
-	    	for (int i=0;i<input.getCustomers().length;i++)
+	    	for (int i=0;i<input.getCustomers().length;i++){
+	    		System.out.println("Customer: " + i);
 	    		System.out.println(input.getCustomers()[i]);
+	    	}
 	    	System.out.println("###### Customers ######");
 	    	System.out.println(inv);
 	    	System.out.println(MoneyRegister.getInstance());

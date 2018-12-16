@@ -22,12 +22,13 @@ public class SellingService extends MicroService{
 
 	private MoneyRegister moneyRegister;
 	private int tick;
-
+	private String testingName;
 
 	public SellingService(String name) {
 		super(name);
 		moneyRegister = MoneyRegister.getInstance();
 		tick = 0;
+		testingName = name;
 	}
 
 	@Override
@@ -63,7 +64,9 @@ public class SellingService extends MicroService{
 					}
 					receipt.setIssueTick(tick);
 					complete(ev, receipt);
+					System.out.println(testingName + " ### delivery event start ###");
 					sendEvent(new DeliveryEvent(ev.getCustomer()));
+					System.out.println(testingName + " ### delivery event end ###");
 					moneyRegister.file(receipt);
 				}
 			}

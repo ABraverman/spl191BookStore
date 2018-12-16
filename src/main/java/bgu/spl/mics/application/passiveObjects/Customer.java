@@ -112,7 +112,7 @@ public class Customer implements Serializable {
 				rec += or.toString() + "\n";
 			rec += "#### RECEIPTS ####\n";
 		}
-		String out = "Id: " + id + " creditcard: " + creditCard.toString() + " receipts: " + rec + "\n";
+		String out = "Id: " + id + " creditcard: " + creditCard.toString() + "\n" + rec + "\n";
 		out += "#### ORDERS SCHEDULE ####\n";
 		for (int i=0;i<orderSchedule.length;i++)
 			out += orderSchedule[i].toString() + "\n";
