@@ -67,8 +67,8 @@ public class BookStoreRunner {
 	    	}
 	    	countService = 1;
 	    	for (int i=0;i<input.getCustomers().length;i++){
-	    		tempThreadName = "s"+countService;
-	    		(new Thread(new APIService(tempThreadName,input.getCustomers()[i]),tempThreadName)).start();
+	    		tempThreadName = "api " + countService;
+	    		(new Thread(new APIService(tempThreadName,input.getCustomers()[i]),tempThreadName + " T")).start();
 	    		countService++;
 	    	}
 	    	initCdl.await();
