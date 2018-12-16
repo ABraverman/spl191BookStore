@@ -42,6 +42,7 @@ public class APIService extends MicroService{
 				List<Pair<String, Integer>> eToRemove = new LinkedList<>();
 				for (Pair<String, Integer> p : orderSchedule) {
 					if (p.getValue() == br.getTick()) {
+						
 						Event e = new BookOrderEvent(customer, p.getKey(), br.getTick());
 						futures.put(e, sendEvent(e));
 						eToRemove.add(p);
