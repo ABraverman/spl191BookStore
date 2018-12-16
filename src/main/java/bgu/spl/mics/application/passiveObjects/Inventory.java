@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Passive data-object representing the store inventory.
@@ -18,8 +19,7 @@ import java.util.HashMap;
 public class Inventory {
 
 	private static final Inventory inv = new Inventory();
-//	TODO: change from array
-	private BookInventoryInfo[] books;
+	private ConcurrentLinkedQueue<BookInventoryInfo> books;
 
 	private Inventory() {
 		books = null;
@@ -42,13 +42,22 @@ public class Inventory {
 	 * @POST this.books == @param inventory;
      */
 	public void load (BookInventoryInfo[ ] inventory ) {
-		books = inventory;
+		if (books == null)
+			books = new ConcurrentLinkedQueue();
+		for (int i=0;i<inventory.length;i++)
+			books.add(inventory[i]);
 	}
 
 //	TODO: ONLY FOR TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	protected BookInventoryInfo[ ] getBooks(){
-	    return books;
+		BookInventoryInfo[] booksArray = new BookInventoryInfo[books.size()];
+		int position = 0;
+		for (BookInventoryInfo b : books){
+			booksArray[position] = b;
+			position++;
+		}
+		return booksArray;			
     }
 
 	/**
