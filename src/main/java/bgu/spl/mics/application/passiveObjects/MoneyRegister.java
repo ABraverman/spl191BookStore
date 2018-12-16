@@ -88,7 +88,7 @@ public class MoneyRegister implements Serializable {
 
 	@Override
 	public String toString() {
-		return receipts.toString();
+		return "###### MONEY REGISTER ######\n"+receipts.toString()+"\n###### MONEY REGISTER ######\n";
 	}
 
 //	TODO: Remove, only for testing
