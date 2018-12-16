@@ -163,4 +163,12 @@ public class Inventory {
 			e.printStackTrace();
 		}
 	}
+	
+	public String toString(){
+		String str = "###### INVENTORY ######\n";
+		for (BookInventoryInfo bit : books)
+			str += bit.toString() + "\n";
+		str += "###### INVENTORY ######\n";
+		return str;
+	}
 }
