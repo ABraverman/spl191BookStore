@@ -41,9 +41,9 @@ public class ResourcesHolder {
 	public Future<DeliveryVehicle> acquireVehicle() {
 		Future<DeliveryVehicle> f = new Future<>();
 		DeliveryVehicle vehicle = availableVehicles.poll();
-		if (vehicle != null)
+		if (vehicle != null) // assigns vehicle if there's one available
 			f.resolve(vehicle);
-		else
+		else // storing a future of the request of vehicle
 		    futures.add(f);
 		return f;
 	}
@@ -56,9 +56,9 @@ public class ResourcesHolder {
      */
 	public void releaseVehicle(DeliveryVehicle vehicle) {
 		Future<DeliveryVehicle> f = futures.poll();
-		if (f != null)
+		if (f != null) // checks if there's is a future waiting for a vehicle
 		    f.resolve(vehicle);
-		else
+		else // if there are no requests for vehicles currently
 	        availableVehicles.add(vehicle);
 	}
 

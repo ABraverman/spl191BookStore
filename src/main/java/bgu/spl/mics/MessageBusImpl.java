@@ -44,7 +44,6 @@ public class MessageBusImpl implements MessageBus {
 
 	}
 
-//	maybe remove notify!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	private void subscribe(Class<? extends Message> type, MicroService m) {
 		eventsToSubscribers.putIfAbsent(type,new ConcurrentLinkedQueue<>());
     	if (!eventsToSubscribers.get(type).contains(m))
@@ -68,7 +67,6 @@ public class MessageBusImpl implements MessageBus {
 		}
 	}
 
-//	maybe remove wait!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	@Override
 	public void sendBroadcast(Broadcast b) {
 		while (!eventsToSubscribers.containsKey(b.getClass())) {

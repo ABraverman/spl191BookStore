@@ -22,7 +22,7 @@ public class BookStoreRunner {
 	public static CountDownLatch terminationCdl;
 	
     public static void main(String[] args) {
-    	if (args.length != 5){
+    	if (args.length != 5){ // checking exactly 5 arguments were given
     		throw new IllegalArgumentException("Program was given " + args.length + " arguments, 5 are needed");
     	}
     	
@@ -31,6 +31,7 @@ public class BookStoreRunner {
 	    	Gson json = new Gson();
 	    	InputObj input = json.fromJson(reader, InputObj.class);
 	    	
+	    	// starting singeltons
 	    	Inventory inv = Inventory.getInstance();
 	    	inv.load(input.getInitialInventory());
 	    	ResourcesHolder rh = ResourcesHolder.getInstance();
@@ -71,10 +72,10 @@ public class BookStoreRunner {
 	    		(new Thread(new APIService(tempThreadName,input.getCustomers()[i]), "T " + tempThreadName)).start();
 	    		countService++;
 	    	}
-	    	initCdl.await();
+	    	initCdl.await(); // waiting for all services to initiate before starting time thread
 	    	tempThreadName = "s"+countService;
 	    	(new Thread(new TimeService("time",input.getSpeed(),input.getDuration()),"T time")).start();
-	    	terminationCdl.await();
+	    	terminationCdl.await(); // waiting for all services to terminate before creating output files
 	    	printCustomers(input.getCustomers(),args[1]);
 	    	inv.printInventoryToFile(args[2]);
 	    	MoneyRegister.getInstance().printOrderReceipts(args[3]);
@@ -91,6 +92,11 @@ public class BookStoreRunner {
     	
     }
     
+    /**
+     * create serialized file for the customers
+     * @param customers array of all customers in the program
+     * @param filePath path to create file
+     */
     private static void printCustomers(Customer[] customers,String filePath){
     	HashMap<Integer,Customer> cushm = new HashMap<>();
 		for (Customer c : customers)
@@ -106,7 +112,10 @@ public class BookStoreRunner {
 			e.printStackTrace();
 		}
     }
-    
+    /**
+     * creating serialized file for the money register
+     * @param filePath path to create file
+     */
     private static void printMoneyRegister(String filePath){
 		try{
 			FileOutputStream outFile = new FileOutputStream(filePath);

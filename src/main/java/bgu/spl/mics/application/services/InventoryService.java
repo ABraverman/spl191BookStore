@@ -28,7 +28,7 @@ public class InventoryService extends MicroService{
 	protected void initialize() {
 
 		subscribeBroadcast(TickBroadcast.class, br -> {
-			if (br.getTick() >= br.getDuration())
+			if (br.getTick() >= br.getDuration()) // checks if this tick is the last one
 				this.terminate();
 		});
 

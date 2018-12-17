@@ -24,14 +24,14 @@ public class LogisticsService extends MicroService {
 	@Override
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class, br -> {
-			if (br.getTick() >= br.getDuration())
+			if (br.getTick() >= br.getDuration()) // checks if this tick is the last one
 				this.terminate();
 		});
 
 		subscribeEvent(DeliveryEvent.class, ev -> {
 			Future<Future<DeliveryVehicle>> future = sendEvent(new AcquireVehicleEvent());
 			if (future != null && future.get() != null && future.get().get() != null) {
-				DeliveryVehicle deliveryVehicle = future.get().get();
+				DeliveryVehicle deliveryVehicle = future.get().get(); // takes a vehicle when one is available
 				deliveryVehicle.deliver(ev.getCustomer().getAddress(), ev.getCustomer().getDistance());
 				sendEvent(new ReleaseVehicleEvent(deliveryVehicle));
 			}

@@ -34,22 +34,22 @@ public class SellingService extends MicroService{
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class, br -> {
 			this.tick = br.getTick();
-			if (tick >= br.getDuration()) {
+			if (tick >= br.getDuration()) { // checks if this tick is the last one
 				this.terminate();
 			}
 		});
 
 		subscribeEvent(BookOrderEvent.class, ev -> {
 			Future<Integer> futurePrice = sendEvent(new GetBookPriceEvent(ev.getBook()));
-			if (futurePrice != null) {
+			if (futurePrice != null) { // checks there is a book available
 				Integer bookPrice = futurePrice.get();
 				if (bookPrice != null) {
 					OrderReceipt receipt = new OrderReceipt(0, this.getName(), ev.getCustomer().getId(), ev.getBook(), bookPrice, ev.getOrderTick(), tick);
 					synchronized (ev.getCustomer()) {
 						if ((bookPrice != -1) && (ev.getCustomer().getAvailableCreditAmount() >= bookPrice)) {
-							Future<OrderResult> futureTake = sendEvent(new TakeBookEvent(ev.getBook()));
+							Future<OrderResult> futureTake = sendEvent(new TakeBookEvent(ev.getBook())); // takes book if it can be afforded
 							if (futureTake != null) {
-								if (futureTake.get() == OrderResult.SUCCESSFULLY_TAKEN) {
+								if (futureTake.get() == OrderResult.SUCCESSFULLY_TAKEN) { // if the book was taken easily
 									moneyRegister.chargeCreditCard(ev.getCustomer(), bookPrice);
 								} else {
 									complete(ev, null);
@@ -64,7 +64,7 @@ public class SellingService extends MicroService{
 					receipt.setIssueTick(tick);
 					complete(ev, receipt);
 					sendEvent(new DeliveryEvent(ev.getCustomer()));
-					moneyRegister.file(receipt);
+					moneyRegister.file(receipt); // store receipt
 				}
 			}
             complete(ev, null);

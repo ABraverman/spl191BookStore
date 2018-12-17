@@ -35,32 +35,32 @@ public class APIService extends MicroService{
 	@Override
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class, br -> {
-			if (br.getTick() >= br.getDuration()) {
+			if (br.getTick() >= br.getDuration()) { // checks if this tick is the last one
 				this.terminate();
 			}
 			else {
 				List<Pair<String, Integer>> eToRemove = new LinkedList<>();
-				for (Pair<String, Integer> p : orderSchedule) {
-					if (p.getValue() == br.getTick()) {
+				for (Pair<String, Integer> p : orderSchedule) { // goes over all the orders for the customer
+					if (p.getValue() == br.getTick()) { // checks if order is supposed to be taken at that tick 
 						Event e = new BookOrderEvent(customer, p.getKey(), br.getTick());
 						Future future = sendEvent(e);
 						if (future != null)
 							futures.put(e,future);
-						eToRemove.add(p);
+						eToRemove.add(p); // stores all orders taken in this tick
 					}
 				}
-				for (Pair<String, Integer> p : eToRemove) {
+				for (Pair<String, Integer> p : eToRemove) { // removes all orders taken in this tick
 					orderSchedule.remove(p);
 				}
 				List<Message> fToRemove = new LinkedList<>();
 				for (Map.Entry<Message, Future<OrderReceipt>> f : futures.entrySet()) {
 					if (f.getValue() != null && f.getValue().get() != null ) {
-						customer.addReceipt(f.getValue().get());
+						customer.addReceipt(f.getValue().get()); // adding receipt for after the sale was made
 					}
-					fToRemove.add(f.getKey());
+					fToRemove.add(f.getKey()); // stores all orders done in this tick
 				}
 				for (Message m: fToRemove) {
-					futures.remove(m);
+					futures.remove(m); // removes all futures of finished orders
 				}
 
 			}

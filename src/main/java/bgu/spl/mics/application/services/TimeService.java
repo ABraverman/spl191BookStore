@@ -38,7 +38,7 @@ public class TimeService extends MicroService{
 	@Override
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class,ev -> {
-			if (ev.getTick() >= ev.getDuration()) {
+			if (ev.getTick() >= ev.getDuration()) { // checks if this tick is the last one
 				timer.purge();
 				timer.cancel();
 				this.terminate();
@@ -48,7 +48,7 @@ public class TimeService extends MicroService{
 			@Override
 			public void run() {
 				if (tick <= duration) {
-					sendBroadcast(new TickBroadcast(tick++, duration));
+					sendBroadcast(new TickBroadcast(tick++, duration)); // uses timer to send a tick when time interval passes
 				}
 				else {
 					this.cancel();

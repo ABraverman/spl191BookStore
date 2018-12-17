@@ -31,10 +31,10 @@ public class ResourceService extends MicroService{
 	@Override
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class, br -> {
-			if (br.getTick() >= br.getDuration()) {
-				for (Future<DeliveryVehicle> f : waitingFutures)
+			if (br.getTick() >= br.getDuration()) { // checks if this tick is the last one
+				for (Future<DeliveryVehicle> f : waitingFutures) // in case of final tick, release all future vehicles
 					if (!f.isDone())
-				        f.resolve(null);
+				        f.resolve(null); // resolving vehicle future so the logistics service can be released
 				this.terminate();
 			}
 		});
