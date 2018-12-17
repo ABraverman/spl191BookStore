@@ -38,35 +38,23 @@ public class InventoryTest {
         assertArrayEquals(books,inv.getBooks());
     }
 
-    @Test
-    public void take() {
-    }
 
     @Test
-    public void checkAvailabiltyPos() {
+    public void takePOS() {
         BookInventoryInfo b1 = new BookInventoryInfo("a", 5 ,3);
         BookInventoryInfo[ ] books = {b1};
         inv.load(books);
-        assertTrue(inv.checkAvailability("a") == 5);
-
+        assertEquals(inv.take("a"), OrderResult.SUCCESSFULLY_TAKEN);
+        assertEquals(b1.getAmountInInventory(), 4);
     }
 
     @Test
-    public void checkAvailabiltyNeg() {
+    public void takeNEG() {
         BookInventoryInfo b1 = new BookInventoryInfo("a", 0 ,3);
         BookInventoryInfo[ ] books = {b1};
         inv.load(books);
-        assertFalse(inv.checkAvailability("a") == 0);
-
-    }
-
-    @Test
-    public void removeBookExpected() {
-        BookInventoryInfo b1 = new BookInventoryInfo("a", 5 ,3);
-        BookInventoryInfo[ ] books = {b1};
-        inv.load(books);
-        inv.removeBook("a");
-        assertEquals(inv.checkAvailability("a"), 4);
+        assertEquals(inv.take("a"), OrderResult.NOT_IN_STOCK);
+        assertEquals(b1.getAmountInInventory(), 0);
     }
 
     @Test

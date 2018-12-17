@@ -15,11 +15,11 @@ public class BookInventoryInfo implements Serializable {
 	private AtomicInteger amount;
 	private int price;
 
-	public BookInventoryInfo(String t ,int a, int p) {
+	public BookInventoryInfo(String bookTitle ,int amount, int price) {
 
-		bookTitle = t;
-		amount = new AtomicInteger(a);
-		price = p;
+		this.bookTitle = bookTitle;
+		this.amount = new AtomicInteger(amount);
+		this.price = price;
 
 	}
 	/**
